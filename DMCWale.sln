@@ -1,0 +1,57 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 17
+VisualStudioVersion = 17.14.37111.16
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{54A90642-561A-4BB1-A94E-469ADEE60C69}") = "dmcwale.client", "dmcwale.client\dmcwale.client.esproj", "{07246B1B-9692-84AA-4111-4BBEAFD837BC}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DMCWale.Server", "DMCWale.Server\DMCWale.Server.csproj", "{2E7835C2-F314-4FC7-97DB-BED3894AE624}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DMCWale.Admin", "DMCWale.Admin\DMCWale.Admin.csproj", "{C05187D1-36A8-4269-9870-E0E0801FF34E}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DMCWale.Data", "DMCWale.Data\DMCWale.Data.csproj", "{FA0B0D11-C0D1-47DD-A1A2-51C8A7916F22}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DMCWale.Service", "DMCWale.Service\DMCWale.Service.csproj", "{504A1228-BB58-432C-A16D-A88BB4E9C6D0}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DMCWale.Repo", "DMCWale.Repo\DMCWale.Repo.csproj", "{E18E54EC-D73E-4339-B1D7-6BC8350F47B9}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{07246B1B-9692-84AA-4111-4BBEAFD837BC}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{07246B1B-9692-84AA-4111-4BBEAFD837BC}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{07246B1B-9692-84AA-4111-4BBEAFD837BC}.Debug|Any CPU.Deploy.0 = Debug|Any CPU
+		{07246B1B-9692-84AA-4111-4BBEAFD837BC}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{07246B1B-9692-84AA-4111-4BBEAFD837BC}.Release|Any CPU.Build.0 = Release|Any CPU
+		{07246B1B-9692-84AA-4111-4BBEAFD837BC}.Release|Any CPU.Deploy.0 = Release|Any CPU
+		{2E7835C2-F314-4FC7-97DB-BED3894AE624}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{2E7835C2-F314-4FC7-97DB-BED3894AE624}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{2E7835C2-F314-4FC7-97DB-BED3894AE624}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{2E7835C2-F314-4FC7-97DB-BED3894AE624}.Release|Any CPU.Build.0 = Release|Any CPU
+		{C05187D1-36A8-4269-9870-E0E0801FF34E}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{C05187D1-36A8-4269-9870-E0E0801FF34E}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{C05187D1-36A8-4269-9870-E0E0801FF34E}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{C05187D1-36A8-4269-9870-E0E0801FF34E}.Release|Any CPU.Build.0 = Release|Any CPU
+		{FA0B0D11-C0D1-47DD-A1A2-51C8A7916F22}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{FA0B0D11-C0D1-47DD-A1A2-51C8A7916F22}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{FA0B0D11-C0D1-47DD-A1A2-51C8A7916F22}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{FA0B0D11-C0D1-47DD-A1A2-51C8A7916F22}.Release|Any CPU.Build.0 = Release|Any CPU
+		{504A1228-BB58-432C-A16D-A88BB4E9C6D0}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{504A1228-BB58-432C-A16D-A88BB4E9C6D0}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{504A1228-BB58-432C-A16D-A88BB4E9C6D0}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{504A1228-BB58-432C-A16D-A88BB4E9C6D0}.Release|Any CPU.Build.0 = Release|Any CPU
+		{E18E54EC-D73E-4339-B1D7-6BC8350F47B9}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{E18E54EC-D73E-4339-B1D7-6BC8350F47B9}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{E18E54EC-D73E-4339-B1D7-6BC8350F47B9}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{E18E54EC-D73E-4339-B1D7-6BC8350F47B9}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {B7B39DEF-5AA7-4447-BB15-A1A41840EA0B}
+	EndGlobalSection
+EndGlobal

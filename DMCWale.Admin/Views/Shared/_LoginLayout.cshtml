@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>@ViewData["Title"] - DMCWale Admin</title>
+    <link rel="icon" href="~/assets/images/favicon.ico" />
+    <link rel="stylesheet" href="~/assets/js/jquery-ui/css/no-theme/jquery-ui-1.10.3.custom.min.css" />
+    <link rel="stylesheet" href="~/assets/css/font-icons/entypo/css/entypo.css" />
+    <link rel="stylesheet" href="~/assets/css/bootstrap.css" />
+    <link rel="stylesheet" href="~/assets/css/neon-core.css" />
+    <link rel="stylesheet" href="~/assets/css/neon-theme.css" />
+    <link rel="stylesheet" href="~/assets/css/neon-forms.css" />
+    <link rel="stylesheet" href="~/assets/css/custom.css" />
+    <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
+</head>
+<body class="page-body login-page login-form-fall">
+    @RenderBody()
+
+    <script src="~/assets/js/jquery-1.11.3.min.js"></script>
+    <script src="~/assets/js/gsap/TweenMax.min.js"></script>
+    <script src="~/assets/js/jquery-ui/js/jquery-ui-1.10.3.minimal.min.js"></script>
+    <script src="~/assets/js/bootstrap.js"></script>
+    <script src="~/assets/js/joinable.js"></script>
+    <script src="~/assets/js/resizeable.js"></script>
+    <script src="~/assets/js/neon-api.js"></script>
+    <script src="~/assets/js/neon-custom.js"></script>
+    @await RenderSectionAsync("Scripts", required: false)
+</body>
+</html>

@@ -1,0 +1,212 @@
+@model ProfileViewModel
+
+@{
+    ViewData["Title"] = "Profile";
+    var displayName = string.Join(" ", new[] { Model.Details.FirstName, Model.Details.LastName }.Where(value => !string.IsNullOrWhiteSpace(value)));
+    displayName = string.IsNullOrWhiteSpace(displayName) ? Model.Details.Username : displayName;
+}
+
+<h3 class="profile-page-title">Profile</h3>
+
+@if (TempData["SuccessMessage"] is string successMessage)
+{
+    <div class="alert alert-success">@successMessage</div>
+}
+
+<div class="profile-layout">
+    <div class="profile-sidebar">
+        <div class="panel panel-default profile-card">
+            <div class="panel-body text-center">
+                <form asp-action="UploadPhoto" method="post" enctype="multipart/form-data" id="profilePhotoForm">
+                    @Html.AntiForgeryToken()
+                    <div class="profile-avatar">
+                        @if (!string.IsNullOrWhiteSpace(Model.Details.ProfileImagePath))
+                        {
+                            <img src="@Model.Details.ProfileImagePath" alt="@displayName" />
+                        }
+                        else
+                        {
+                            <i class="entypo-user"></i>
+                        }
+                        <label class="profile-photo-button" for="Details_ProfileImage" title="Change profile photo">
+                            <i class="entypo-camera"></i>
+                        </label>
+                        <input asp-for="Details.ProfileImage" type="file" accept=".jpg,.jpeg,.png,.webp,image/jpeg,image/png,image/webp" class="hidden" />
+                    </div>
+                    <span asp-validation-for="Details.ProfileImage" class="text-danger"></span>
+                </form>
+
+                <h3 class="profile-card-name">@displayName</h3>
+                <p class="profile-card-email">@Model.Details.Email</p>
+            </div>
+        </div>
+
+        <div class="panel panel-default">
+            <div class="panel-body">
+                <h4 class="profile-section-heading">UPDATE PASSWORD</h4>
+                <form asp-action="ChangePassword" method="post" role="form">
+                    @Html.AntiForgeryToken()
+                    <div asp-validation-summary="ModelOnly" class="alert alert-danger"></div>
+
+                    <div class="form-group">
+                        <label asp-for="Password.OldPassword" class="control-label"></label>
+                        <input asp-for="Password.OldPassword" class="form-control" autocomplete="current-password" placeholder="Enter Old Password" />
+                        <span asp-validation-for="Password.OldPassword" class="text-danger"></span>
+                    </div>
+
+                    <div class="form-group">
+                        <label asp-for="Password.NewPassword" class="control-label"></label>
+                        <input asp-for="Password.NewPassword" class="form-control" autocomplete="new-password" placeholder="Enter New Password" />
+                        <span asp-validation-for="Password.NewPassword" class="text-danger"></span>
+                    </div>
+
+                    <div class="form-group">
+                        <label asp-for="Password.ConfirmPassword" class="control-label"></label>
+                        <input asp-for="Password.ConfirmPassword" class="form-control" autocomplete="new-password" placeholder="Enter Confirm Password" />
+                        <span asp-validation-for="Password.ConfirmPassword" class="text-danger"></span>
+                    </div>
+
+                    <div class="text-right">
+                        <button type="submit" class="btn btn-success">
+                            <i class="entypo-check"></i>
+                            Change Password
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <div class="profile-main">
+        <div class="panel panel-default">
+            <div class="panel-body">
+                <div class="profile-details-box">
+                    <h4 class="profile-section-heading">PROFILE DETAILS</h4>
+
+                    <form asp-action="Save" method="post" role="form">
+                        @Html.AntiForgeryToken()
+                        <div asp-validation-summary="ModelOnly" class="alert alert-danger"></div>
+
+                        <div class="row">
+                            <div class="col-sm-2">
+                                <div class="form-group">
+                                    <label asp-for="Details.Salutation" class="control-label"></label>
+                                    <select asp-for="Details.Salutation" asp-items="Model.Details.Salutations" class="form-control"></select>
+                                    <span asp-validation-for="Details.Salutation" class="text-danger"></span>
+                                </div>
+                            </div>
+                            <div class="col-sm-5">
+                                <div class="form-group">
+                                    <label asp-for="Details.FirstName" class="control-label"></label>
+                                    <input asp-for="Details.FirstName" class="form-control" autocomplete="given-name" />
+                                    <span asp-validation-for="Details.FirstName" class="text-danger"></span>
+                                </div>
+                            </div>
+                            <div class="col-sm-5">
+                                <div class="form-group">
+                                    <label asp-for="Details.LastName" class="control-label"></label>
+                                    <input asp-for="Details.LastName" class="form-control" autocomplete="family-name" />
+                                    <span asp-validation-for="Details.LastName" class="text-danger"></span>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="row">
+                            <div class="col-sm-2">
+                                <div class="form-group">
+                                    <label asp-for="Details.CountryCode" class="control-label"></label>
+                                    <input asp-for="Details.CountryCode" class="form-control" placeholder="eg. +91" />
+                                    <span asp-validation-for="Details.CountryCode" class="text-danger"></span>
+                                </div>
+                            </div>
+                            <div class="col-sm-4">
+                                <div class="form-group">
+                                    <label asp-for="Details.Mobile" class="control-label"></label>
+                                    <input asp-for="Details.Mobile" class="form-control" autocomplete="tel" />
+                                    <span asp-validation-for="Details.Mobile" class="text-danger"></span>
+                                </div>
+                            </div>
+                            <div class="col-sm-6">
+                                <div class="form-group">
+                                    <label asp-for="Details.City" class="control-label"></label>
+                                    <input asp-for="Details.City" class="form-control" autocomplete="address-level2" />
+                                    <span asp-validation-for="Details.City" class="text-danger"></span>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="row">
+                            <div class="col-sm-6">
+                                <div class="form-group">
+                                    <label asp-for="Details.Address1" class="control-label"></label>
+                                    <input asp-for="Details.Address1" class="form-control" autocomplete="address-line1" />
+                                    <span asp-validation-for="Details.Address1" class="text-danger"></span>
+                                </div>
+                            </div>
+                            <div class="col-sm-6">
+                                <div class="form-group">
+                                    <label asp-for="Details.Address2" class="control-label"></label>
+                                    <input asp-for="Details.Address2" class="form-control" autocomplete="address-line2" />
+                                    <span asp-validation-for="Details.Address2" class="text-danger"></span>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="form-group">
+                            <label asp-for="Details.Signature" class="control-label"></label>
+                            <div class="signature-editor">
+                                <div class="signature-toolbar">
+                                    <span>File</span>
+                                    <span>Edit</span>
+                                    <span>View</span>
+                                    <span>Insert</span>
+                                    <span>Format</span>
+                                    <span>Tools</span>
+                                </div>
+                                <div class="signature-toolbar signature-toolbar-icons">
+                                    <i class="entypo-reply"></i>
+                                    <i class="entypo-forward"></i>
+                                    <strong>B</strong>
+                                    <em>I</em>
+                                    <i class="entypo-align-left"></i>
+                                    <i class="entypo-align-center"></i>
+                                    <i class="entypo-align-right"></i>
+                                    <i class="entypo-link"></i>
+                                    <i class="entypo-picture"></i>
+                                </div>
+                                <textarea asp-for="Details.Signature" class="form-control signature-textarea" rows="7"></textarea>
+                                <div class="signature-footer">POWERED BY TINYMCE</div>
+                            </div>
+                            <span asp-validation-for="Details.Signature" class="text-danger"></span>
+                        </div>
+
+                        <div class="text-right">
+                            <button type="submit" class="btn btn-success">
+                                <i class="entypo-floppy"></i>
+                                Save
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+    <script>
+        (function () {
+            var fileInput = document.getElementById('Details_ProfileImage');
+            var photoForm = document.getElementById('profilePhotoForm');
+
+            if (fileInput && photoForm) {
+                fileInput.addEventListener('change', function () {
+                    if (fileInput.files && fileInput.files.length > 0) {
+                        photoForm.submit();
+                    }
+                });
+            }
+        })();
+    </script>
+}

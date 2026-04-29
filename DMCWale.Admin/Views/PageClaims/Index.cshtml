@@ -1,0 +1,67 @@
+@model PageClaimEditViewModel
+
+@{
+    ViewData["Title"] = "Page Claims";
+}
+
+<div class="row">
+    <div class="col-sm-12">
+        @if (TempData["SuccessMessage"] is string successMessage)
+        {
+            <div class="alert alert-success">@successMessage</div>
+        }
+
+        <div class="panel panel-primary">
+            <div class="panel-heading">
+                <div class="panel-title">Page Claims</div>
+            </div>
+            <div class="panel-body">
+                <form asp-action="Index" method="post" role="form">
+                    @Html.AntiForgeryToken()
+                    <div asp-validation-summary="ModelOnly" class="alert alert-danger"></div>
+
+                    <div class="table-responsive">
+                        <table class="table table-bordered table-striped">
+                            <thead>
+                                <tr>
+                                    <th>Module</th>
+                                    <th>Page</th>
+                                    @foreach (var role in Model.Roles)
+                                    {
+                                        <th class="text-center">@role.RoleName</th>
+                                    }
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @foreach (var permission in Model.Permissions)
+                                {
+                                    <tr>
+                                        <td>@permission.Module</td>
+                                        <td>@permission.Name</td>
+                                        @foreach (var role in Model.Roles)
+                                        {
+                                            var value = $"{role.RoleId}||{permission.ClaimValue}";
+                                            <td class="text-center">
+                                                <label class="checkbox-inline">
+                                                    <input type="checkbox"
+                                                           name="SelectedClaims"
+                                                           value="@value"
+                                                           checked="@role.ClaimValues.Contains(permission.ClaimValue)" />
+                                                </label>
+                                            </td>
+                                        }
+                                    </tr>
+                                }
+                            </tbody>
+                        </table>
+                    </div>
+
+                    <button type="submit" class="btn btn-primary">
+                        <i class="entypo-check"></i>
+                        Save Claims
+                    </button>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>

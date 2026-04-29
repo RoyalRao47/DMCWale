@@ -1,0 +1,82 @@
+@model UserListViewModel
+
+@{
+    ViewData["Title"] = "Users";
+}
+
+<div class="row">
+    <div class="col-sm-12">
+        @if (TempData["SuccessMessage"] is string successMessage)
+        {
+            <div class="alert alert-success">@successMessage</div>
+        }
+
+        <div class="panel panel-primary">
+            <div class="panel-heading">
+                <div class="panel-title">User List</div>
+                <div class="panel-options">
+                    <a asp-action="Create" class="btn btn-primary btn-sm">
+                        <i class="entypo-user-add"></i>
+                        Create User
+                    </a>
+                </div>
+            </div>
+            <div class="panel-body">
+                <form asp-action="Index" method="get" class="form-inline" role="form">
+                    <div class="form-group">
+                        <label asp-for="RoleName" class="control-label">Role</label>
+                        <select asp-for="RoleName" asp-items="Model.Roles" class="form-control">
+                            <option value="">All roles</option>
+                        </select>
+                    </div>
+                    <button type="submit" class="btn btn-primary">
+                        <i class="entypo-search"></i>
+                        Filter
+                    </button>
+                    <a asp-action="Index" class="btn btn-default">Clear</a>
+                </form>
+            </div>
+
+            <table class="table table-bordered table-striped table-hover">
+                <thead>
+                    <tr>
+                        <th>First Name</th>
+                        <th>Last Name</th>
+                        <th>Username</th>
+                        <th>Email</th>
+                        <th>Mobile</th>
+                        <th>Role</th>
+                        <th>Active</th>
+                        <th>Left</th>
+                        <th>Added</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @if (Model.Users.Count == 0)
+                    {
+                        <tr>
+                            <td colspan="9" class="text-center text-muted">No users found.</td>
+                        </tr>
+                    }
+                    else
+                    {
+                        foreach (var user in Model.Users)
+                        {
+                            <tr>
+                                <td>@user.FirstName</td>
+                                <td>@user.LastName</td>
+                                <td>@user.Username</td>
+                                <td>@user.Email</td>
+                                <td>@user.Mobile</td>
+                                <td>@user.RoleName</td>
+                                <td>@(user.IsActive ? "Yes" : "No")</td>
+                                <td>@(user.IsLeft ? "Yes" : "No")</td>
+                                <td>@user.AddDate.ToString("yyyy-MM-dd")</td>
+                            </tr>
+                        }
+                    }
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>

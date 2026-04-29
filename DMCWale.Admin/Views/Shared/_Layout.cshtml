@@ -1,0 +1,455 @@
+@functions {
+    private bool CanPage(string permission)
+    {
+        if (permission == PagePermissionConstants.ProfileView &&
+            User.Identity?.IsAuthenticated == true)
+        {
+            return true;
+        }
+
+        return User.IsInRole(RoleConstants.Admin) ||
+            User.HasClaim(PagePermissionConstants.ClaimType, permission);
+    }
+
+    private bool CanAnyPage(params string[] permissions)
+    {
+        return permissions.Any(CanPage);
+    }
+}
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>@ViewData["Title"] - DMCWale Admin</title>
+    <link rel="icon" href="~/assets/images/favicon.ico" />
+    <link rel="stylesheet" href="~/assets/js/jquery-ui/css/no-theme/jquery-ui-1.10.3.custom.min.css" />
+    <link rel="stylesheet" href="~/assets/css/font-icons/entypo/css/entypo.css" />
+    <link rel="stylesheet" href="~/assets/css/bootstrap.css" />
+    <link rel="stylesheet" href="~/assets/css/neon-core.css" />
+    <link rel="stylesheet" href="~/assets/css/neon-theme.css" />
+    <link rel="stylesheet" href="~/assets/css/neon-forms.css" />
+    <link rel="stylesheet" href="~/assets/css/custom.css" />
+    <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
+</head>
+<body class="page-body page-fade">
+    <div class="page-container">
+        <div class="sidebar-menu">
+            <div class="sidebar-menu-inner">
+                <header class="logo-env">
+                    <div class="logo">
+                        <a asp-controller="Dashboard" asp-action="Index">
+                            <img src="~/dmcwale-logo.jpg" width="120" alt="DMCWale" />
+                        </a>
+                    </div>
+                    <div class="sidebar-collapse">
+                        <a href="#" class="sidebar-collapse-icon">
+                            <i class="entypo-menu"></i>
+                        </a>
+                    </div>
+                    <div class="sidebar-mobile-menu visible-xs">
+                        <a href="#" class="with-animation">
+                            <i class="entypo-menu"></i>
+                        </a>
+                    </div>
+                </header>
+
+                <ul id="main-menu" class="main-menu">
+                    @if (CanPage(PagePermissionConstants.DashboardView))
+                    {
+                        <li>
+                            <a asp-controller="Dashboard" asp-action="Index">
+                                <i class="entypo-gauge"></i>
+                                <span class="title">Dashboard</span>
+                            </a>
+                        </li>
+                    }
+
+                    @if (CanPage(PagePermissionConstants.ProfileView))
+                    {
+                        <li>
+                            <a asp-controller="Profile" asp-action="Index">
+                                <i class="entypo-user"></i>
+                                <span class="title">Profile</span>
+                            </a>
+                        </li>
+                    }
+
+                    @if (CanAnyPage(
+                        PagePermissionConstants.BookingsManageBookings,
+                        PagePermissionConstants.BookingsAddBooking,
+                        PagePermissionConstants.BookingsManageEnquiry,
+                        PagePermissionConstants.BookingsReports,
+                        PagePermissionConstants.BookingsQuery))
+                    {
+                        <li>
+                            <a href="#">
+                                <i class="entypo-layout"></i>
+                                <span class="title">Bookings</span>
+                            </a>
+                            <ul>
+                                @if (CanPage(PagePermissionConstants.BookingsManageBookings))
+                                {
+                                    <li><a href="/Bookings/Manage"><span class="title">Manage Bookings</span></a></li>
+                                }
+                                @if (CanPage(PagePermissionConstants.BookingsAddBooking))
+                                {
+                                    <li><a href="/Bookings/Add"><span class="title">Add Booking</span></a></li>
+                                }
+                                @if (CanPage(PagePermissionConstants.BookingsManageEnquiry))
+                                {
+                                    <li><a href="/Bookings/Enquiry"><span class="title">Manage Enquiry</span></a></li>
+                                }
+                                @if (CanPage(PagePermissionConstants.BookingsReports))
+                                {
+                                    <li><a href="/Bookings/Reports"><span class="title">Reports</span></a></li>
+                                }
+                                @if (CanPage(PagePermissionConstants.BookingsQuery))
+                                {
+                                    <li><a href="/Bookings/Query"><span class="title">Query</span></a></li>
+                                }
+                            </ul>
+                        </li>
+                    }
+
+                    @if (User.IsInRole(RoleConstants.Admin))
+                    {
+                        <li>
+                            <a asp-controller="Dashboard" asp-action="Admin">
+                                <i class="entypo-tools"></i>
+                                <span class="title">Admin</span>
+                            </a>
+                        </li>
+                        <li>
+                            <a href="#">
+                                <i class="entypo-users"></i>
+                                <span class="title">Accounts</span>
+                            </a>
+                            <ul>
+                                <li>
+                                    <a asp-controller="User" asp-action="Index">
+                                        <span class="title">User List</span>
+                                    </a>
+                                </li>
+                                <li>
+                                    <a asp-controller="User" asp-action="Create">
+                                        <span class="title">Create User</span>
+                                    </a>
+                                </li>
+                                <li>
+                                    <a asp-controller="PageClaims" asp-action="Index">
+                                        <span class="title">Set Page Claims</span>
+                                    </a>
+                                </li>
+                            </ul>
+                        </li>
+                    }
+
+                    @if (CanAnyPage(PagePermissionConstants.HotelView, PagePermissionConstants.HotelAdd))
+                    {
+                        <li>
+                            <a href="#"><i class="entypo-doc-text"></i><span class="title">Hotel</span></a>
+                            <ul>
+                                @if (CanPage(PagePermissionConstants.HotelView))
+                                {
+                                    <li><a href="/Hotel/Manage"><span class="title">Manage Hotel</span></a></li>
+                                }
+                                @if (CanPage(PagePermissionConstants.HotelAdd))
+                                {
+                                    <li><a href="/Hotel/Add"><span class="title">Add Hotel</span></a></li>
+                                }
+                            </ul>
+                        </li>
+                    }
+
+                    @if (CanAnyPage(PagePermissionConstants.ActivityView, PagePermissionConstants.ActivityAdd))
+                    {
+                        <li>
+                            <a href="#"><i class="entypo-camera"></i><span class="title">Activity</span></a>
+                            <ul>
+                                @if (CanPage(PagePermissionConstants.ActivityView))
+                                {
+                                    <li><a href="/Activity/Manage"><span class="title">Manage Activity</span></a></li>
+                                }
+                                @if (CanPage(PagePermissionConstants.ActivityAdd))
+                                {
+                                    <li><a href="/Activity/Add"><span class="title">Add Activity</span></a></li>
+                                }
+                            </ul>
+                        </li>
+                    }
+
+                    @if (CanAnyPage(PagePermissionConstants.TransferView, PagePermissionConstants.TransferAdd))
+                    {
+                        <li>
+                            <a href="#"><i class="entypo-cab"></i><span class="title">Transfer</span></a>
+                            <ul>
+                                @if (CanPage(PagePermissionConstants.TransferView))
+                                {
+                                    <li><a href="/Transfer/Manage"><span class="title">Manage Transfer</span></a></li>
+                                }
+                                @if (CanPage(PagePermissionConstants.TransferAdd))
+                                {
+                                    <li><a href="/Transfer/Add"><span class="title">Add Transfer</span></a></li>
+                                }
+                            </ul>
+                        </li>
+                    }
+
+                    @if (CanAnyPage(PagePermissionConstants.MealView, PagePermissionConstants.MealAdd))
+                    {
+                        <li>
+                            <a href="#"><i class="entypo-cup"></i><span class="title">Meal</span></a>
+                            <ul>
+                                @if (CanPage(PagePermissionConstants.MealView))
+                                {
+                                    <li><a href="/Meal/Manage"><span class="title">Manage Meal</span></a></li>
+                                }
+                                @if (CanPage(PagePermissionConstants.MealAdd))
+                                {
+                                    <li><a href="/Meal/Add"><span class="title">Add Meal</span></a></li>
+                                }
+                            </ul>
+                        </li>
+                    }
+
+                    @if (CanAnyPage(PagePermissionConstants.VisaView, PagePermissionConstants.VisaAdd))
+                    {
+                        <li>
+                            <a href="#"><i class="entypo-vcard"></i><span class="title">Visa</span></a>
+                            <ul>
+                                @if (CanPage(PagePermissionConstants.VisaView))
+                                {
+                                    <li><a href="/Visa/Manage"><span class="title">Manage Visa</span></a></li>
+                                }
+                                @if (CanPage(PagePermissionConstants.VisaAdd))
+                                {
+                                    <li><a href="/Visa/Add"><span class="title">Add Visa</span></a></li>
+                                }
+                            </ul>
+                        </li>
+                    }
+
+                    @if (CanAnyPage(PagePermissionConstants.PackageView, PagePermissionConstants.PackageAdd))
+                    {
+                        <li>
+                            <a href="#"><i class="entypo-suitcase"></i><span class="title">Package</span></a>
+                            <ul>
+                                @if (CanPage(PagePermissionConstants.PackageView))
+                                {
+                                    <li><a href="/Package/Manage"><span class="title">Manage Package</span></a></li>
+                                }
+                                @if (CanPage(PagePermissionConstants.PackageAdd))
+                                {
+                                    <li><a href="/Package/Add"><span class="title">Add Package</span></a></li>
+                                }
+                            </ul>
+                        </li>
+                    }
+
+                    @if (CanAnyPage(PagePermissionConstants.BalanceSheetView, PagePermissionConstants.BalanceSheetAdd))
+                    {
+                        <li>
+                            <a href="#"><i class="entypo-paper-plane"></i><span class="title">Balance Sheet</span></a>
+                            <ul>
+                                @if (CanPage(PagePermissionConstants.BalanceSheetView))
+                                {
+                                    <li><a href="/BalanceSheet/Manage"><span class="title">View Balance Sheet</span></a></li>
+                                }
+                                @if (CanPage(PagePermissionConstants.BalanceSheetAdd))
+                                {
+                                    <li><a href="/BalanceSheet/Add"><span class="title">Add Balance Sheet</span></a></li>
+                                }
+                            </ul>
+                        </li>
+                    }
+
+                    @if (CanAnyPage(PagePermissionConstants.ComboPackagesView, PagePermissionConstants.ComboPackagesAdd))
+                    {
+                        <li>
+                            <a href="#"><i class="entypo-list"></i><span class="title">Combo Packages</span></a>
+                            <ul>
+                                @if (CanPage(PagePermissionConstants.ComboPackagesView))
+                                {
+                                    <li><a href="/ComboPackages/Manage"><span class="title">Manage Combo Packages</span></a></li>
+                                }
+                                @if (CanPage(PagePermissionConstants.ComboPackagesAdd))
+                                {
+                                    <li><a href="/ComboPackages/Add"><span class="title">Add Combo Package</span></a></li>
+                                }
+                            </ul>
+                        </li>
+                    }
+
+                    @if (CanAnyPage(PagePermissionConstants.PaymentsView, PagePermissionConstants.PaymentsAdd))
+                    {
+                        <li>
+                            <a href="#"><i class="entypo-credit-card"></i><span class="title">Payments</span></a>
+                            <ul>
+                                @if (CanPage(PagePermissionConstants.PaymentsView))
+                                {
+                                    <li><a href="/Payments/Manage"><span class="title">Manage Payments</span></a></li>
+                                }
+                                @if (CanPage(PagePermissionConstants.PaymentsAdd))
+                                {
+                                    <li><a href="/Payments/Add"><span class="title">Add Payment</span></a></li>
+                                }
+                            </ul>
+                        </li>
+                    }
+
+                    @if (CanAnyPage(PagePermissionConstants.CouponView, PagePermissionConstants.CouponAdd))
+                    {
+                        <li>
+                            <a href="#"><i class="entypo-tag"></i><span class="title">Coupon</span></a>
+                            <ul>
+                                @if (CanPage(PagePermissionConstants.CouponView))
+                                {
+                                    <li><a href="/Coupon/Manage"><span class="title">Manage Coupon</span></a></li>
+                                }
+                                @if (CanPage(PagePermissionConstants.CouponAdd))
+                                {
+                                    <li><a href="/Coupon/Add"><span class="title">Add Coupon</span></a></li>
+                                }
+                            </ul>
+                        </li>
+                    }
+
+                    @if (CanAnyPage(PagePermissionConstants.MarketingView, PagePermissionConstants.MarketingAdd))
+                    {
+                        <li>
+                            <a href="#"><i class="entypo-mail"></i><span class="title">Marketing</span></a>
+                            <ul>
+                                @if (CanPage(PagePermissionConstants.MarketingView))
+                                {
+                                    <li><a href="/Marketing/Manage"><span class="title">Manage Marketing</span></a></li>
+                                }
+                                @if (CanPage(PagePermissionConstants.MarketingAdd))
+                                {
+                                    <li><a href="/Marketing/Add"><span class="title">Add Marketing</span></a></li>
+                                }
+                            </ul>
+                        </li>
+                    }
+
+                    @if (CanAnyPage(PagePermissionConstants.BlogView, PagePermissionConstants.BlogAdd))
+                    {
+                        <li>
+                            <a href="#"><i class="entypo-rss"></i><span class="title">Blog</span></a>
+                            <ul>
+                                @if (CanPage(PagePermissionConstants.BlogView))
+                                {
+                                    <li><a href="/Blog/Manage"><span class="title">Manage Blog</span></a></li>
+                                }
+                                @if (CanPage(PagePermissionConstants.BlogAdd))
+                                {
+                                    <li><a href="/Blog/Add"><span class="title">Add Blog</span></a></li>
+                                }
+                            </ul>
+                        </li>
+                    }
+                </ul>
+            </div>
+        </div>
+
+        <div class="main-content">
+            <div class="row">
+                <div class="col-md-6 col-sm-8 clearfix">
+                    <ul class="user-info pull-left pull-none-xsm">
+                        <li class="profile-info dropdown">
+                            <a asp-controller="Profile" asp-action="Index">
+                                <img src="~/assets/images/thumb-1@2x.png" alt="" class="img-circle" width="44" />
+                                @(User.Identity?.Name ?? "DMCWale Admin")
+                            </a>
+                        </li>
+                    </ul>
+                </div>
+                <div class="col-md-6 col-sm-4 clearfix hidden-xs">
+                    <ul class="list-inline links-list pull-right">
+                        <li>
+                            <form asp-controller="Account" asp-action="Logout" method="post" class="navbar-form">
+                                <button type="submit" class="btn btn-link">
+                                    Log Out <i class="entypo-logout right"></i>
+                                </button>
+                            </form>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+
+            <hr />
+
+            @RenderBody()
+
+            <footer class="main">
+                &copy; @DateTime.Now.Year DMCWale Admin CMS
+            </footer>
+        </div>
+    </div>
+
+    <script src="~/assets/js/jquery-1.11.3.min.js"></script>
+    <script src="~/assets/js/gsap/TweenMax.min.js"></script>
+    <script src="~/assets/js/jquery-ui/js/jquery-ui-1.10.3.minimal.min.js"></script>
+    <script src="~/assets/js/bootstrap.js"></script>
+    <script src="~/assets/js/joinable.js"></script>
+    <script src="~/assets/js/resizeable.js"></script>
+    <script src="~/assets/js/neon-api.js"></script>
+    <script src="~/assets/js/cookies.min.js"></script>
+    <script>
+        (function () {
+            var currentPath = normalizePath(window.location.pathname);
+            var currentArea = getFirstPathSegment(currentPath);
+            var links = document.querySelectorAll('#main-menu a[href]:not([href="#"])');
+            var activeLink = null;
+
+            links.forEach(function (link) {
+                var linkPath = normalizePath(new URL(link.getAttribute('href'), window.location.origin).pathname);
+
+                if (linkPath === currentPath) {
+                    activeLink = link;
+                    return;
+                }
+
+                if (!activeLink && getFirstPathSegment(linkPath) === currentArea) {
+                    activeLink = link;
+                }
+            });
+
+            if (!activeLink) {
+                return;
+            }
+
+            var activeItem = activeLink.closest('li');
+            if (activeItem) {
+                activeItem.classList.add('active');
+            }
+
+            var parentMenu = activeLink.closest('ul');
+            while (parentMenu && parentMenu.id !== 'main-menu') {
+                parentMenu.classList.add('visible');
+
+                var parentItem = parentMenu.closest('li');
+                if (parentItem) {
+                    parentItem.classList.add('active', 'opened');
+                }
+
+                parentMenu = parentItem ? parentItem.parentElement.closest('ul') : null;
+            }
+
+            function normalizePath(path) {
+                path = (path || '/').toLowerCase().replace(/\/+$/, '');
+                return path || '/';
+            }
+
+            function getFirstPathSegment(path) {
+                return normalizePath(path).split('/').filter(Boolean)[0] || '';
+            }
+        })();
+    </script>
+    <script src="~/assets/js/neon-custom.js"></script>
+    <script src="~/js/site.js" asp-append-version="true"></script>
+    @await RenderSectionAsync("Scripts", required: false)
+</body>
+</html>

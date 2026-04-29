@@ -1,0 +1,20 @@
+@{
+    ViewData["Title"] = "Access Denied";
+    Layout = "_LoginLayout";
+}
+
+<div class="page-container no-sidebar">
+    <div class="main-content">
+        <div class="page-error-404">
+            <div class="error-symbol">
+                <i class="entypo-attention"></i>
+            </div>
+            <div class="error-text">
+                <h2>403</h2>
+                <p>Access denied.</p>
+            </div>
+            <hr />
+            <a asp-controller="Account" asp-action="Login" class="btn btn-primary">Return to Login</a>
+        </div>
+    </div>
+</div>

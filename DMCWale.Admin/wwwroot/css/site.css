@@ -1,0 +1,153 @@
+.field-validation-error,
+.text-danger {
+    color: #cc2424;
+}
+
+.validation-summary-valid {
+    display: none;
+}
+
+.navbar-form {
+    margin: 0;
+    padding: 0;
+}
+
+.links-list .btn-link {
+    color: #949494;
+    padding: 0;
+    text-decoration: none;
+}
+
+.links-list .btn-link:hover {
+    color: black;
+}
+.radio-inline, .checkbox-inline {
+   
+    margin-bottom: 20px !important;
+   
+}
+
+.profile-page-title {
+    margin-top: 0;
+    margin-bottom: 25px;
+    color: #001b5c;
+    font-weight: 700;
+}
+
+.profile-layout {
+    display: grid;
+    grid-template-columns: minmax(280px, 32%) 1fr;
+    gap: 20px;
+}
+
+.profile-card .panel-body {
+    padding: 20px;
+}
+
+.profile-avatar {
+    width: 120px;
+    height: 120px;
+    margin: 0 auto 18px;
+    border-radius: 50%;
+    background: #2f6ee9;
+    color: #fff;
+    position: relative;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    overflow: visible;
+}
+
+.profile-avatar > i {
+    font-size: 88px;
+    line-height: 1;
+}
+
+.profile-avatar img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    border-radius: 50%;
+}
+
+.profile-photo-button {
+    position: absolute;
+    right: 0;
+    top: 0;
+    width: 31px;
+    height: 31px;
+    border-radius: 50%;
+    background: #d3d4e4;
+    color: #20304d;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    margin: 0;
+}
+
+.profile-card-name {
+    margin: 0 0 4px;
+    font-size: 20px;
+    font-weight: 700;
+    color: #1f2f52;
+}
+
+.profile-card-email {
+    margin: 0;
+    color: #667399;
+}
+
+.profile-section-heading {
+    margin: 0 0 25px;
+    color: #001b5c;
+    font-size: 16px;
+    font-weight: 700;
+}
+
+.profile-details-box {
+    border: 1px solid #d9e1f2;
+    padding: 26px 24px 22px;
+}
+
+.signature-editor {
+    border: 1px solid #c9c9c9;
+    background: #fff;
+}
+
+.signature-toolbar {
+    min-height: 34px;
+    border-bottom: 1px solid #d7d7d7;
+    display: flex;
+    align-items: center;
+    gap: 18px;
+    padding: 6px 10px;
+    color: #33415c;
+}
+
+.signature-toolbar-icons {
+    gap: 14px;
+    font-size: 17px;
+}
+
+.signature-textarea {
+    border: 0;
+    border-radius: 0;
+    box-shadow: none;
+    resize: vertical;
+}
+
+.signature-footer {
+    min-height: 29px;
+    border-top: 1px solid #d7d7d7;
+    padding: 7px 10px;
+    text-align: right;
+    font-size: 11px;
+    color: #33415c;
+}
+
+@media (max-width: 991px) {
+    .profile-layout {
+        grid-template-columns: 1fr;
+    }
+}
