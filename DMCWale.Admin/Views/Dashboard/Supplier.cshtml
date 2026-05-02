@@ -1,24 +1,7 @@
+@model CrmDashboardViewModel
+
 @{
     ViewData["Title"] = "Supplier Dashboard";
 }
 
-<div class="row">
-    <div class="col-sm-4">
-        <div class="tile-stats tile-blue">
-            <div class="icon"><i class="entypo-user"></i></div>
-            <div class="num">Supplier</div>
-            <h3>Profile</h3>
-            <p>Access your assigned CMS workspace.</p>
-        </div>
-    </div>
-    <div class="col-sm-8">
-        <div class="panel panel-primary">
-            <div class="panel-heading">
-                <div class="panel-title">Supplier Workspace</div>
-            </div>
-            <div class="panel-body">
-                <p>Role authorization confirmed for supplier access.</p>
-            </div>
-        </div>
-    </div>
-</div>
+<partial name="_DashboardMetrics" model="Model" />

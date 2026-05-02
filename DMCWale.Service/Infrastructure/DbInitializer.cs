@@ -1,6 +1,8 @@
 using System.Security.Claims;
+using DMCWale.Data;
 using DMCWale.Data.Constants;
 using DMCWale.Data.Models;
+using DMCWale.Data.Models.Crm;
 using DMCWale.Data.Models.Identity;
 using DMCWale.Repo.Interfaces;
 using Microsoft.AspNetCore.Identity;
@@ -48,6 +50,7 @@ public static class DbInitializer
         }
 
         await GrantProfileClaimToAllRolesAsync(roleManager);
+        await SeedCrmPagePermissionsAsync(context, roleManager);
 
         var adminSection = configuration.GetSection("DefaultAdmin");
         var email = adminSection["Email"];
@@ -107,6 +110,142 @@ public static class DbInitializer
         {
             await userManager.AddToRoleAsync(adminUser, RoleConstants.Admin);
         }
+    }
+
+    private static async Task SeedCrmPagePermissionsAsync(ApplicationDbContext context, RoleManager<ApplicationRole> roleManager)
+    {
+        foreach (var moduleDefinition in CrmPagePermissionCatalog.Modules)
+        {
+            var pageModule = await context.PageModules
+                .FirstOrDefaultAsync(module => module.Code == moduleDefinition.Code);
+
+            if (pageModule is null)
+            {
+                pageModule = new PageModule
+                {
+                    Name = moduleDefinition.Name,
+                    Code = moduleDefinition.Code,
+                    Area = moduleDefinition.Area,
+                    Controller = moduleDefinition.Controller,
+                    Action = moduleDefinition.Action,
+                    DisplayOrder = moduleDefinition.DisplayOrder,
+                    IsActive = true,
+                    AddDate = DateTime.UtcNow
+                };
+
+                await context.PageModules.AddAsync(pageModule);
+                await context.SaveChangesAsync();
+            }
+            else
+            {
+                pageModule.Name = moduleDefinition.Name;
+                pageModule.Area = moduleDefinition.Area;
+                pageModule.Controller = moduleDefinition.Controller;
+                pageModule.Action = moduleDefinition.Action;
+                pageModule.DisplayOrder = moduleDefinition.DisplayOrder;
+                pageModule.IsActive = true;
+                pageModule.ModifyDate = DateTime.UtcNow;
+                await context.SaveChangesAsync();
+            }
+
+            foreach (var permissionCode in moduleDefinition.PermissionCodes)
+            {
+                var pagePermission = await context.PagePermissions
+                    .FirstOrDefaultAsync(permission =>
+                        permission.PageModuleId == pageModule.Id &&
+                        permission.PermissionCode == permissionCode);
+
+                if (pagePermission is null)
+                {
+                    await context.PagePermissions.AddAsync(new PagePermission
+                    {
+                        PageModuleId = pageModule.Id,
+                        PermissionCode = permissionCode,
+                        PermissionName = permissionCode == CrmPermissionActionConstants.RecordPayment
+                            ? "Record Payment"
+                            : permissionCode,
+                        IsActive = true,
+                        AddDate = DateTime.UtcNow
+                    });
+                }
+                else
+                {
+                    pagePermission.PermissionName = permissionCode == CrmPermissionActionConstants.RecordPayment
+                        ? "Record Payment"
+                        : permissionCode;
+                    pagePermission.IsActive = true;
+                    pagePermission.ModifyDate = DateTime.UtcNow;
+                }
+            }
+
+            await context.SaveChangesAsync();
+        }
+
+        var permissions = await context.PagePermissions
+            .Include(permission => permission.PageModule)
+            .ToListAsync();
+
+        foreach (var roleName in RoleConstants.DefaultRoles)
+        {
+            var role = await roleManager.FindByNameAsync(roleName);
+            if (role is null)
+            {
+                continue;
+            }
+
+            var roleClaims = await roleManager.GetClaimsAsync(role);
+
+            foreach (var moduleDefinition in CrmPagePermissionCatalog.Modules)
+            {
+                var allowedPermissions = moduleDefinition.DefaultRolePermissions.TryGetValue(roleName, out var configuredPermissions)
+                    ? configuredPermissions
+                    : [];
+
+                foreach (var permission in permissions.Where(permission => permission.PageModule.Code == moduleDefinition.Code))
+                {
+                    var isAllowed = roleName == RoleConstants.Admin ||
+                        allowedPermissions.Contains(permission.PermissionCode, StringComparer.OrdinalIgnoreCase);
+
+                    var rolePermission = await context.RolePagePermissions
+                        .FirstOrDefaultAsync(x => x.RoleId == role.Id && x.PagePermissionId == permission.Id);
+
+                    if (rolePermission is null)
+                    {
+                        await context.RolePagePermissions.AddAsync(new RolePagePermission
+                        {
+                            RoleId = role.Id,
+                            PagePermissionId = permission.Id,
+                            IsAllowed = isAllowed,
+                            AddDate = DateTime.UtcNow
+                        });
+                    }
+                    else
+                    {
+                        rolePermission.IsAllowed = isAllowed;
+                        rolePermission.ModifyDate = DateTime.UtcNow;
+                    }
+
+                    if (!isAllowed)
+                    {
+                        continue;
+                    }
+
+                    var claimValue = PagePermissionConstants.BuildClaimValue(moduleDefinition.Code, permission.PermissionCode);
+                    var hasClaim = roleClaims.Any(claim =>
+                        claim.Type == PagePermissionConstants.ClaimType &&
+                        claim.Value == claimValue);
+
+                    if (!hasClaim)
+                    {
+                        await roleManager.AddClaimAsync(
+                            role,
+                            new Claim(PagePermissionConstants.ClaimType, claimValue));
+                    }
+                }
+            }
+        }
+
+        await context.SaveChangesAsync();
     }
 
     private static async Task GrantProfileClaimToAllRolesAsync(RoleManager<ApplicationRole> roleManager)

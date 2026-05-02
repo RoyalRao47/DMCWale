@@ -1,0 +1,30 @@
+@model List<string>
+
+@{
+    ViewData["Title"] = "Roles";
+}
+
+<div class="row">
+    <div class="col-md-6">
+        <div class="panel panel-primary">
+            <div class="panel-heading">
+                <div class="panel-title">Roles</div>
+            </div>
+            <table class="table table-bordered table-striped">
+                <thead>
+                    <tr>
+                        <th>Role Name</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var roleName in Model)
+                    {
+                        <tr>
+                            <td>@roleName</td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>

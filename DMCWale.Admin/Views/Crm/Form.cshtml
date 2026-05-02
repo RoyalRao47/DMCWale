@@ -1,0 +1,99 @@
+@model CrmModuleViewModel
+
+@{
+    ViewData["Title"] = Model.Title;
+    var isEdit = Model.Rows.Count > 0;
+}
+
+<div class="row">
+    <div class="col-md-9">
+        <div class="panel panel-primary">
+            <div class="panel-heading">
+                <div class="panel-title">@(isEdit ? "Edit" : "Create") @Model.Title</div>
+            </div>
+            <div class="panel-body">
+                <form method="post" role="form" class="crm-validated-form" novalidate>
+                    @Html.AntiForgeryToken()
+                    <input asp-for="ModuleCode" type="hidden" />
+                    <input asp-for="Title" type="hidden" />
+                    <input asp-for="Controller" type="hidden" />
+                    <div asp-validation-summary="ModelOnly" class="alert alert-danger"></div>
+
+                    <div class="row">
+                        @for (var i = 0; i < Model.Fields.Count; i++)
+                        {
+                            var field = Model.Fields[i];
+                            <div class="col-sm-6">
+                                <div class="form-group crm-field-group">
+                                    <input asp-for="Fields[i].Name" type="hidden" />
+                                    <input asp-for="Fields[i].Label" type="hidden" />
+                                    <input asp-for="Fields[i].FieldType" type="hidden" />
+                                    <input asp-for="Fields[i].IsRequired" type="hidden" />
+                                    <input asp-for="Fields[i].IsReadOnly" type="hidden" />
+                                    <label class="control-label" for="Fields_@(i)__Value">@field.Label</label>
+                                    @if (field.FieldType == "select")
+                                    {
+                                        <select asp-for="Fields[i].Value"
+                                                class="form-control crm-field"
+                                                required="@field.IsRequired"
+                                                data-crm-label="@field.Label"
+                                                data-crm-required="@field.IsRequired.ToString().ToLowerInvariant()"
+                                                data-crm-type="@field.FieldType">
+                                            @if (!field.IsRequired)
+                                            {
+                                                <option value="">Select @field.Label</option>
+                                            }
+                                            @if (field.IsRequired && field.Options.Count == 0)
+                                            {
+                                                <option value="">No @field.Label records available</option>
+                                            }
+                                            @foreach (var option in field.Options)
+                                            {
+                                                <option value="@option.Value">@option.Text</option>
+                                            }
+                                        </select>
+                                    }
+                                    else if (field.FieldType == "checkbox")
+                                    {
+                                        <select asp-for="Fields[i].Value"
+                                                class="form-control crm-field"
+                                                data-crm-label="@field.Label"
+                                                data-crm-required="@field.IsRequired.ToString().ToLowerInvariant()"
+                                                data-crm-type="@field.FieldType">
+                                            <option value="false">No</option>
+                                            <option value="true">Yes</option>
+                                        </select>
+                                    }
+                                    else
+                                    {
+                                        <input asp-for="Fields[i].Value"
+                                               type="@field.FieldType"
+                                               class="form-control crm-field"
+                                               readonly="@field.IsReadOnly"
+                                               required="@field.IsRequired"
+                                               data-crm-label="@field.Label"
+                                               data-crm-required="@field.IsRequired.ToString().ToLowerInvariant()"
+                                               data-crm-type="@field.FieldType" />
+                                    }
+                                    @if (field.IsRequired)
+                                    {
+                                        <span class="text-muted">Required</span>
+                                    }
+                                    <span class="help-block text-danger crm-field-error"></span>
+                                </div>
+                            </div>
+                        }
+                    </div>
+
+                    <div class="form-group">
+                        <button type="submit" class="btn btn-primary">
+                            <i class="entypo-check"></i>
+                            Save
+                        </button>
+                        <a asp-controller="@Model.Controller" asp-action="Index" class="btn btn-default">Cancel</a>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>

@@ -1,24 +1,7 @@
+@model CrmDashboardViewModel
+
 @{
     ViewData["Title"] = "Agent Dashboard";
 }
 
-<div class="row">
-    <div class="col-sm-4">
-        <div class="tile-stats tile-green">
-            <div class="icon"><i class="entypo-briefcase"></i></div>
-            <div class="num">Agent</div>
-            <h3>Operations</h3>
-            <p>Review team activity and publishing queues.</p>
-        </div>
-    </div>
-    <div class="col-sm-8">
-        <div class="panel panel-primary">
-            <div class="panel-heading">
-                <div class="panel-title">Agent Workspace</div>
-            </div>
-            <div class="panel-body">
-                <p>Role authorization confirmed for agent access.</p>
-            </div>
-        </div>
-    </div>
-</div>
+<partial name="_DashboardMetrics" model="Model" />

@@ -1,0 +1,33 @@
+@model CrmModuleViewModel
+
+@{
+    ViewData["Title"] = $"{Model.Title} Details";
+    var row = Model.Rows.FirstOrDefault();
+}
+
+<div class="row">
+    <div class="col-md-8">
+        <div class="panel panel-primary">
+            <div class="panel-heading">
+                <div class="panel-title">@Model.Title Details</div>
+            </div>
+            <table class="table table-bordered table-striped">
+                <tbody>
+                    @if (row is not null)
+                    {
+                        foreach (var cell in row.Cells)
+                        {
+                            <tr>
+                                <th style="width: 220px;">@cell.Label</th>
+                                <td>@cell.Value</td>
+                            </tr>
+                        }
+                    }
+                </tbody>
+            </table>
+            <div class="panel-body">
+                <a asp-controller="@Model.Controller" asp-action="Index" class="btn btn-default">Back</a>
+            </div>
+        </div>
+    </div>
+</div>

@@ -50,53 +50,87 @@ public static class PagePermissionConstants
     public const string BlogView = "Blog.View";
     public const string BlogAdd = "Blog.Add";
 
-    public static readonly IReadOnlyList<PagePermissionDefinition> All =
-    [
-        new("Dashboard", "Dashboard", "View Dashboard", DashboardView),
-        new("Profile", "Profile", "View Profile", ProfileView),
+    public static readonly IReadOnlyList<PagePermissionDefinition> All = BuildAll();
 
-        new("Bookings", "Bookings", "Manage Bookings", BookingsManageBookings),
-        new("Bookings", "Bookings", "Add Booking", BookingsAddBooking),
-        new("Bookings", "Bookings", "Manage Enquiry", BookingsManageEnquiry),
-        new("Bookings", "Bookings", "Reports", BookingsReports),
-        new("Bookings", "Bookings", "Query", BookingsQuery),
+    public static string BuildClaimValue(string moduleCode, string permissionCode)
+    {
+        return $"{moduleCode}.{permissionCode}";
+    }
 
-        new("Hotel", "Hotel", "Manage Hotel", HotelView),
-        new("Hotel", "Hotel", "Add Hotel", HotelAdd),
+    private static IReadOnlyList<PagePermissionDefinition> BuildAll()
+    {
+        var permissions = new List<PagePermissionDefinition>
+        {
+            new("Dashboard", "Dashboard", "View Dashboard", DashboardView),
+            new("Profile", "Profile", "View Profile", ProfileView),
 
-        new("Activity", "Activity", "Manage Activity", ActivityView),
-        new("Activity", "Activity", "Add Activity", ActivityAdd),
+            new("Bookings", "Bookings", "Manage Bookings", BookingsManageBookings),
+            new("Bookings", "Bookings", "Add Booking", BookingsAddBooking),
+            new("Bookings", "Bookings", "Manage Enquiry", BookingsManageEnquiry),
+            new("Bookings", "Bookings", "Reports", BookingsReports),
+            new("Bookings", "Bookings", "Query", BookingsQuery),
 
-        new("Transfer", "Transfer", "Manage Transfer", TransferView),
-        new("Transfer", "Transfer", "Add Transfer", TransferAdd),
+            new("Hotel", "Hotel", "Manage Hotel", HotelView),
+            new("Hotel", "Hotel", "Add Hotel", HotelAdd),
 
-        new("Meal", "Meal", "Manage Meal", MealView),
-        new("Meal", "Meal", "Add Meal", MealAdd),
+            new("Activity", "Activity", "Manage Activity", ActivityView),
+            new("Activity", "Activity", "Add Activity", ActivityAdd),
 
-        new("Visa", "Visa", "Manage Visa", VisaView),
-        new("Visa", "Visa", "Add Visa", VisaAdd),
+            new("Transfer", "Transfer", "Manage Transfer", TransferView),
+            new("Transfer", "Transfer", "Add Transfer", TransferAdd),
 
-        new("Package", "Package", "Manage Package", PackageView),
-        new("Package", "Package", "Add Package", PackageAdd),
+            new("Meal", "Meal", "Manage Meal", MealView),
+            new("Meal", "Meal", "Add Meal", MealAdd),
 
-        new("Balance Sheet", "BalanceSheet", "View Balance Sheet", BalanceSheetView),
-        new("Balance Sheet", "BalanceSheet", "Add Balance Sheet", BalanceSheetAdd),
+            new("Visa", "Visa", "Manage Visa", VisaView),
+            new("Visa", "Visa", "Add Visa", VisaAdd),
 
-        new("Combo Packages", "ComboPackages", "Manage Combo Packages", ComboPackagesView),
-        new("Combo Packages", "ComboPackages", "Add Combo Package", ComboPackagesAdd),
+            new("Package", "Package", "Manage Package", PackageView),
+            new("Package", "Package", "Add Package", PackageAdd),
 
-        new("Payments", "Payments", "Manage Payments", PaymentsView),
-        new("Payments", "Payments", "Add Payment", PaymentsAdd),
+            new("Balance Sheet", "BalanceSheet", "View Balance Sheet", BalanceSheetView),
+            new("Balance Sheet", "BalanceSheet", "Add Balance Sheet", BalanceSheetAdd),
 
-        new("Coupon", "Coupon", "Manage Coupon", CouponView),
-        new("Coupon", "Coupon", "Add Coupon", CouponAdd),
+            new("Combo Packages", "ComboPackages", "Manage Combo Packages", ComboPackagesView),
+            new("Combo Packages", "ComboPackages", "Add Combo Package", ComboPackagesAdd),
 
-        new("Marketing", "Marketing", "Manage Marketing", MarketingView),
-        new("Marketing", "Marketing", "Add Marketing", MarketingAdd),
+            new("Payments", "Payments", "Manage Payments", PaymentsView),
+            new("Payments", "Payments", "Add Payment", PaymentsAdd),
 
-        new("Blog", "Blog", "Manage Blog", BlogView),
-        new("Blog", "Blog", "Add Blog", BlogAdd)
-    ];
+            new("Coupon", "Coupon", "Manage Coupon", CouponView),
+            new("Coupon", "Coupon", "Add Coupon", CouponAdd),
+
+            new("Marketing", "Marketing", "Manage Marketing", MarketingView),
+            new("Marketing", "Marketing", "Add Marketing", MarketingAdd),
+
+            new("Blog", "Blog", "Manage Blog", BlogView),
+            new("Blog", "Blog", "Add Blog", BlogAdd)
+        };
+
+        foreach (var definition in CrmPagePermissionCatalog.Modules)
+        {
+            permissions.AddRange(definition.PermissionCodes.Select(permissionCode =>
+                new PagePermissionDefinition(
+                    definition.Name,
+                    definition.Code,
+                    $"{GetPermissionDisplayName(permissionCode)} {definition.Name}",
+                    BuildClaimValue(definition.Code, permissionCode))));
+        }
+
+        return permissions
+            .GroupBy(permission => permission.ClaimValue, StringComparer.OrdinalIgnoreCase)
+            .Select(group => group.First())
+            .ToList();
+    }
+
+    private static string GetPermissionDisplayName(string permissionCode)
+    {
+        return permissionCode switch
+        {
+            CrmPermissionActionConstants.RecordPayment => "Record Payment",
+            _ => permissionCode
+        };
+    }
 }
 
 public sealed record PagePermissionDefinition(
@@ -104,3 +138,66 @@ public sealed record PagePermissionDefinition(
     string Key,
     string Name,
     string ClaimValue);
+
+public sealed record CrmPageModuleDefinition(
+    string Name,
+    string Code,
+    string Area,
+    string Controller,
+    string Action,
+    int DisplayOrder,
+    IReadOnlyList<string> PermissionCodes,
+    IReadOnlyDictionary<string, IReadOnlyList<string>> DefaultRolePermissions);
+
+public static class CrmPagePermissionCatalog
+{
+    public static readonly IReadOnlyList<CrmPageModuleDefinition> Modules =
+    [
+        Module("Admin Dashboard", CrmModuleConstants.AdminDashboard, "Dashboard", "Admin", 10, [CrmPermissionActionConstants.View], AdminOnly()),
+        Module("Staff Dashboard", CrmModuleConstants.StaffDashboard, "Dashboard", "Staff", 20, [CrmPermissionActionConstants.View], Roles(RoleConstants.Staff)),
+        Module("Agent Dashboard", CrmModuleConstants.AgentDashboard, "Dashboard", "Agent", 30, [CrmPermissionActionConstants.View], Roles(RoleConstants.Agent)),
+        Module("Supplier Dashboard", CrmModuleConstants.SupplierDashboard, "Dashboard", "Supplier", 40, [CrmPermissionActionConstants.View], Roles(RoleConstants.Supplier)),
+        Module("User Management", CrmModuleConstants.UserManagement, "User", "Index", 50, [CrmPermissionActionConstants.View, CrmPermissionActionConstants.Add, CrmPermissionActionConstants.Edit, CrmPermissionActionConstants.Delete], AdminOnly()),
+        Module("Role Permissions", CrmModuleConstants.RolePermission, "RolePermission", "Index", 60, [CrmPermissionActionConstants.View, CrmPermissionActionConstants.Edit], AdminOnly()),
+        Module("Destinations", CrmModuleConstants.Destination, "Destination", "Index", 70, [CrmPermissionActionConstants.View, CrmPermissionActionConstants.Add, CrmPermissionActionConstants.Edit, CrmPermissionActionConstants.Delete], Roles(RoleConstants.Admin, RoleConstants.Staff, RoleConstants.Agent)),
+        Module("Markup", CrmModuleConstants.Markup, "Markup", "Index", 80, [CrmPermissionActionConstants.View, CrmPermissionActionConstants.Add, CrmPermissionActionConstants.Edit], AdminOnly()),
+        Module("Currencies", CrmModuleConstants.Currency, "Currency", "Index", 90, [CrmPermissionActionConstants.View, CrmPermissionActionConstants.Add, CrmPermissionActionConstants.Edit], AdminOnly()),
+        Module("Exchange Rates", CrmModuleConstants.ExchangeRate, "ExchangeRate", "Index", 100, [CrmPermissionActionConstants.View, CrmPermissionActionConstants.Add, CrmPermissionActionConstants.Edit, CrmPermissionActionConstants.Override], AdminOnly()),
+        Module("Leads", CrmModuleConstants.Lead, "Lead", "Index", 110, [CrmPermissionActionConstants.View, CrmPermissionActionConstants.Add, CrmPermissionActionConstants.Edit, CrmPermissionActionConstants.Approve, CrmPermissionActionConstants.Reject, CrmPermissionActionConstants.Assign, CrmPermissionActionConstants.Reassign], Roles(RoleConstants.Admin, RoleConstants.Staff, RoleConstants.Agent)),
+        Module("Packages", CrmModuleConstants.Package, "Package", "Index", 120, [CrmPermissionActionConstants.View, CrmPermissionActionConstants.Add, CrmPermissionActionConstants.Edit, CrmPermissionActionConstants.Delete], Roles(RoleConstants.Admin, RoleConstants.Staff, RoleConstants.Agent)),
+        Module("Quotations", CrmModuleConstants.Quotation, "Quotation", "Index", 130, [CrmPermissionActionConstants.View, CrmPermissionActionConstants.Add, CrmPermissionActionConstants.Edit, CrmPermissionActionConstants.Export], Roles(RoleConstants.Admin, RoleConstants.Staff, RoleConstants.Agent)),
+        Module("Bookings", CrmModuleConstants.Booking, "Booking", "Index", 140, [CrmPermissionActionConstants.View, CrmPermissionActionConstants.Add, CrmPermissionActionConstants.Edit, CrmPermissionActionConstants.Assign, CrmPermissionActionConstants.Reassign, CrmPermissionActionConstants.Override], Roles(RoleConstants.Admin, RoleConstants.Staff, RoleConstants.Agent, RoleConstants.Supplier)),
+        Module("Payments", CrmModuleConstants.Payment, "Payment", "Index", 150, [CrmPermissionActionConstants.View, CrmPermissionActionConstants.Add, CrmPermissionActionConstants.RecordPayment, CrmPermissionActionConstants.Export], Roles(RoleConstants.Admin, RoleConstants.Staff, RoleConstants.Agent)),
+        Module("Execution", CrmModuleConstants.Execution, "Execution", "Index", 160, [CrmPermissionActionConstants.View, CrmPermissionActionConstants.Edit, CrmPermissionActionConstants.Execute], Roles(RoleConstants.Admin, RoleConstants.Staff, RoleConstants.Supplier)),
+        Module("Reports", CrmModuleConstants.Report, "Report", "Index", 170, [CrmPermissionActionConstants.View, CrmPermissionActionConstants.Export], Roles(RoleConstants.Admin, RoleConstants.Staff)),
+        Module("API Providers", CrmModuleConstants.ApiProvider, "ApiProvider", "Index", 180, [CrmPermissionActionConstants.View, CrmPermissionActionConstants.Add, CrmPermissionActionConstants.Edit], Roles(RoleConstants.Admin)),
+        Module("Inventory Search", CrmModuleConstants.InventorySearch, "InventorySearch", "Hotel", 190, [CrmPermissionActionConstants.View], Roles(RoleConstants.Admin, RoleConstants.Staff, RoleConstants.Agent, RoleConstants.Supplier))
+    ];
+
+    private static CrmPageModuleDefinition Module(
+        string name,
+        string code,
+        string controller,
+        string action,
+        int displayOrder,
+        IReadOnlyList<string> permissionCodes,
+        IReadOnlyDictionary<string, IReadOnlyList<string>> defaultRolePermissions)
+    {
+        return new CrmPageModuleDefinition(name, code, string.Empty, controller, action, displayOrder, permissionCodes, defaultRolePermissions);
+    }
+
+    private static IReadOnlyDictionary<string, IReadOnlyList<string>> AdminOnly()
+    {
+        return Roles(RoleConstants.Admin);
+    }
+
+    private static IReadOnlyDictionary<string, IReadOnlyList<string>> Roles(params string[] roleNames)
+    {
+        return roleNames.ToDictionary(
+            roleName => roleName,
+            roleName => roleName == RoleConstants.Admin
+                ? CrmPermissionActionConstants.All
+                : (IReadOnlyList<string>)[CrmPermissionActionConstants.View],
+            StringComparer.OrdinalIgnoreCase);
+    }
+}

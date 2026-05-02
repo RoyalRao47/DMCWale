@@ -1,0 +1,99 @@
+@model CrmModuleViewModel
+
+@{
+    ViewData["Title"] = Model.Title;
+    var canAdd = User.IsInRole(RoleConstants.Admin) || User.HasClaim(PagePermissionConstants.ClaimType, PagePermissionConstants.BuildClaimValue(Model.ModuleCode, CrmPermissionActionConstants.Add));
+    var canEdit = User.IsInRole(RoleConstants.Admin) || User.HasClaim(PagePermissionConstants.ClaimType, PagePermissionConstants.BuildClaimValue(Model.ModuleCode, CrmPermissionActionConstants.Edit));
+    var canDelete = User.IsInRole(RoleConstants.Admin) || User.HasClaim(PagePermissionConstants.ClaimType, PagePermissionConstants.BuildClaimValue(Model.ModuleCode, CrmPermissionActionConstants.Delete));
+}
+
+<div class="row">
+    <div class="col-sm-12">
+        @if (TempData["SuccessMessage"] is string successMessage)
+        {
+            <div class="alert alert-success">@successMessage</div>
+        }
+        @if (TempData["ErrorMessage"] is string errorMessage)
+        {
+            <div class="alert alert-danger">@errorMessage</div>
+        }
+
+        <div class="panel panel-primary">
+            <div class="panel-heading">
+                <div class="panel-title">@Model.Title</div>
+                @if (canAdd)
+                {
+                    <div class="panel-options">
+                        <a asp-controller="@Model.Controller" asp-action="Create" class="btn btn-primary btn-sm">
+                            <i class="entypo-plus"></i>
+                            Add
+                        </a>
+                    </div>
+                }
+            </div>
+
+            <table class="table table-bordered table-striped table-hover">
+                <thead>
+                    <tr>
+                        @if (Model.Rows.FirstOrDefault()?.Cells is { Count: > 0 } headerCells)
+                        {
+                            foreach (var cell in headerCells)
+                            {
+                                <th>@cell.Label</th>
+                            }
+                        }
+                        else
+                        {
+                            foreach (var field in Model.Fields.Take(6))
+                            {
+                                <th>@field.Label</th>
+                            }
+                        }
+                        <th class="text-right">Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @if (Model.Rows.Count == 0)
+                    {
+                        <tr>
+                            <td colspan="7" class="text-center text-muted">No records found.</td>
+                        </tr>
+                    }
+                    else
+                    {
+                        foreach (var row in Model.Rows)
+                        {
+                            <tr>
+                                @foreach (var cell in row.Cells)
+                                {
+                                    <td>@cell.Value</td>
+                                }
+                                <td class="text-right">
+                                    <a asp-controller="@Model.Controller" asp-action="Details" asp-route-id="@row.Id" class="btn btn-default btn-sm">Details</a>
+                                    @if (canEdit)
+                                    {
+                                        <a asp-controller="@Model.Controller" asp-action="Edit" asp-route-id="@row.Id" class="btn btn-info btn-sm">Edit</a>
+                                    }
+                                    @if (canDelete)
+                                    {
+                                        <form asp-controller="@Model.Controller"
+                                              asp-action="Delete"
+                                              asp-route-id="@row.Id"
+                                              method="post"
+                                              class="inline-form"
+                                              data-confirm="true"
+                                              data-confirm-title="Confirm Deactivation"
+                                              data-confirm-message="Are you sure you want to deactivate this record?">
+                                            @Html.AntiForgeryToken()
+                                            <button type="submit" class="btn btn-danger btn-sm">Deactivate</button>
+                                        </form>
+                                    }
+                                </td>
+                            </tr>
+                        }
+                    }
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>

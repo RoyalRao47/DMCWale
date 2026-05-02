@@ -42,6 +42,20 @@ builder.Services.AddScoped<IRoleService, RoleService>();
 builder.Services.AddScoped<IUserManagementService, UserManagementService>();
 builder.Services.AddScoped<IPageClaimService, PageClaimService>();
 builder.Services.AddScoped<IProfileService, ProfileService>();
+builder.Services.AddScoped<ICrmModuleService, CrmModuleService>();
+builder.Services.AddScoped<IDestinationService, DestinationService>();
+builder.Services.AddScoped<IMarkupService, MarkupService>();
+builder.Services.AddScoped<ICurrencyService, CurrencyService>();
+builder.Services.AddScoped<IExchangeRateService, ExchangeRateService>();
+builder.Services.AddScoped<ILeadService, LeadService>();
+builder.Services.AddScoped<IPackageService, PackageService>();
+builder.Services.AddScoped<IQuotationService, QuotationService>();
+builder.Services.AddScoped<IBookingService, BookingService>();
+builder.Services.AddScoped<IPaymentService, PaymentService>();
+builder.Services.AddScoped<IExecutionService, ExecutionService>();
+builder.Services.AddScoped<IApiProviderService, ApiProviderService>();
+builder.Services.AddScoped<IReportService, ReportService>();
+builder.Services.AddScoped<IInventorySearchService, InventorySearchService>();
 
 var app = builder.Build();
 

@@ -1,0 +1,18 @@
+@model CrmModuleViewModel
+
+@{
+    ViewData["Title"] = Model.Title;
+}
+
+<div class="row">
+    <div class="col-sm-12">
+        <div class="panel panel-primary">
+            <div class="panel-heading">
+                <div class="panel-title">@Model.Title</div>
+            </div>
+            <div class="panel-body">
+                <p class="text-muted">This workflow surface is wired for authorization and navigation. Detailed processing logic will be added when provider, payment, and operational rules are finalized.</p>
+            </div>
+        </div>
+    </div>
+</div>

@@ -1,31 +1,7 @@
+@model CrmDashboardViewModel
+
 @{
     ViewData["Title"] = "Admin Dashboard";
 }
 
-<div class="row">
-    <div class="col-sm-4">
-        <div class="tile-stats tile-red">
-            <div class="icon"><i class="entypo-tools"></i></div>
-            <div class="num">Admin</div>
-            <h3>System Control</h3>
-            <p>Manage users, roles, and CMS operations.</p>
-        </div>
-    </div>
-    <div class="col-sm-8">
-        <div class="panel panel-primary">
-            <div class="panel-heading">
-                <div class="panel-title">Admin Actions</div>
-            </div>
-            <div class="panel-body">
-                <a asp-controller="User" asp-action="Create" class="btn btn-primary">
-                    <i class="entypo-user-add"></i>
-                    Create User
-                </a>
-                <a asp-controller="User" asp-action="Index" class="btn btn-default">
-                    <i class="entypo-users"></i>
-                    User List
-                </a>
-            </div>
-        </div>
-    </div>
-</div>
+<partial name="_DashboardMetrics" model="Model" />

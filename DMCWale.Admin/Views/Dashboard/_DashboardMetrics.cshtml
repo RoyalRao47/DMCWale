@@ -1,0 +1,28 @@
+@model CrmDashboardViewModel
+
+<div class="row">
+    @foreach (var metric in Model.Metrics)
+    {
+        <div class="col-sm-4">
+            <div class="tile-stats tile-primary">
+                <div class="icon"><i class="entypo-chart-bar"></i></div>
+                <div class="num">@metric.Value</div>
+                <h3>@metric.Label</h3>
+                <p>@Model.Title</p>
+            </div>
+        </div>
+    }
+</div>
+
+<div class="row">
+    <div class="col-sm-12">
+        <div class="panel panel-primary">
+            <div class="panel-heading">
+                <div class="panel-title">@Model.Title</div>
+            </div>
+            <div class="panel-body">
+                <p class="text-muted">Operational CRM metrics are ready. Leaderboards, supplier performance, notifications, and external integrations are intentionally placeholder-backed until production data and provider credentials are available.</p>
+            </div>
+        </div>
+    </div>
+</div>

@@ -18,6 +18,6 @@ public class RoleController : Controller
     public async Task<IActionResult> Index()
     {
         var roles = await _roleService.GetAllRolesAsync();
-        return Json(roles.Select(role => role.Name));
+        return View(roles.Select(role => role.Name ?? string.Empty).ToList());
     }
 }
