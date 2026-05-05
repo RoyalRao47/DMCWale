@@ -1,14 +1,10 @@
-using DMCWale.Data.Models.Identity;
+namespace DMCWale.Repo.Models;
 
-namespace DMCWale.Data.Models;
-
-public class User
+public class UserManagementRecord
 {
     public int Id { get; set; }
 
     public string AspNetUserId { get; set; } = string.Empty;
-
-    public ApplicationUser AspNetUser { get; set; } = null!;
 
     public string Username { get; set; } = string.Empty;
 
@@ -25,6 +21,8 @@ public class User
     public bool IsActive { get; set; }
 
     public bool IsLeft { get; set; }
+
+    public string RoleName { get; set; } = string.Empty;
 
     public DateTime AddDate { get; set; }
 

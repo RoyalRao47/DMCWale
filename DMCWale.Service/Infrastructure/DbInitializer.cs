@@ -59,6 +59,7 @@ public static class DbInitializer
         var firstName = adminSection["FirstName"];
         var lastName = adminSection["LastName"];
         var mobile = adminSection["Mobile"];
+        const string defaultAdminAgentSupplierCode = "DMC-1000";
 
         if (string.IsNullOrWhiteSpace(email) ||
             string.IsNullOrWhiteSpace(username) ||
@@ -78,6 +79,7 @@ public static class DbInitializer
             {
                 UserName = username,
                 Email = email,
+                AgentSupplierCode = defaultAdminAgentSupplierCode,
                 PhoneNumber = mobile,
                 EmailConfirmed = true
             };
@@ -90,6 +92,12 @@ public static class DbInitializer
             }
         }
 
+        if (string.IsNullOrWhiteSpace(adminUser.AgentSupplierCode))
+        {
+            adminUser.AgentSupplierCode = defaultAdminAgentSupplierCode;
+            await userManager.UpdateAsync(adminUser);
+        }
+
         if (!await userRepository.AsQueryable().AnyAsync(user => user.AspNetUserId == adminUser.Id))
         {
             await userRepository.InsertAsync(new User
@@ -100,6 +108,7 @@ public static class DbInitializer
                 LastName = lastName,
                 Email = email,
                 Mobile = mobile,
+                AgentSupplierCode = adminUser.AgentSupplierCode ?? defaultAdminAgentSupplierCode,
                 IsActive = true,
                 IsLeft = false,
                 AddDate = DateTime.UtcNow

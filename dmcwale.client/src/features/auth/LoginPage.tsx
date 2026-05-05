@@ -1,8 +1,8 @@
 import { FormEvent, useState } from 'react';
 import { login } from '../../api/authApi';
 import Button from '../../components/common/Button';
-import Input from '../../components/common/Input';
 import Loader from '../../components/common/Loader';
+import { mainNavigationItems } from '../../components/layout/navigation.config';
 import { saveAuth } from './authStore';
 import type { LoginRequest } from './auth.types';
 import { validateLogin, type LoginErrors } from './login.schema';
@@ -10,6 +10,8 @@ import { validateLogin, type LoginErrors } from './login.schema';
 type LoginPageProps = {
     navigate: (path: string) => void;
 };
+
+const benefits = ['Instant Cashback', 'Personalized Voucher', 'No Minimum Balance', 'Online Payment'];
 
 export default function LoginPage({ navigate }: LoginPageProps) {
     const [values, setValues] = useState<LoginRequest>({
@@ -53,50 +55,107 @@ export default function LoginPage({ navigate }: LoginPageProps) {
 
     return (
         <main className="login-page">
+            <header className="public-header">
+                <div className="public-top-header">
+                    <div className="container public-top-inner">
+                        <a className="public-logo" href="/login" onClick={event => event.preventDefault()}>
+                            <img src="/assets/DMCWale-logo.jpg" alt="DMCWale" />
+                        </a>
+                        <div className="public-top-right">
+                            <div>(€) EUR</div>
+                            <div>Help</div>
+                            <button className="public-login-btn" type="button">
+                                Login
+                            </button>
+                        </div>
+                    </div>
+                </div>
+
+                <nav className="public-nav-wrap" aria-label="Public navigation">
+                    <div className="container">
+                        <ul className="public-main-nav">
+                            {mainNavigationItems.map(item => (
+                                <li className={item.children ? 'has-dropdown' : ''} key={item.label}>
+                                    <a href="/login" onClick={event => event.preventDefault()}>
+                                        <span className="nav-icon" aria-hidden="true">{item.icon}</span>
+                                        {item.label}
+                                    </a>
+                                    {item.children ? (
+                                        <ul className="dropdown">
+                                            {item.children.map(child => (
+                                                <li key={child}>
+                                                    <a href="/login" onClick={event => event.preventDefault()}>
+                                                        ◉ {child}
+                                                    </a>
+                                                </li>
+                                            ))}
+                                        </ul>
+                                    ) : null}
+                                </li>
+                            ))}
+                        </ul>
+                    </div>
+                </nav>
+            </header>
+
             <section className="login-hero">
                 <div className="login-overlay">
                     <div className="container login-content">
                         <div className="login-copy">
-                            <img src="/assets/DMCWale-logo.jpg" alt="DMCWale" className="login-logo" />
-                            <h1>Go somewhere you have never been before</h1>
+                            <h1>Go Somewhere you have never been Before!!</h1>
                             <p>
-                                A B2B travel workspace for partners to search services, build packages,
-                                manage payments, and keep booking execution moving.
+                                Largest B2B Marketplace connecting travel suppliers & partners with an extensive
+                                inventory of worldwide tours, transfers and hotels to expand your business reach.
                             </p>
+                            <div className="hero-buttons">
+                                <Button type="button" variant="secondary">
+                                    Register Supplier
+                                </Button>
+                                <Button type="button">Explore More</Button>
+                            </div>
                         </div>
 
                         <form className="login-card" onSubmit={handleSubmit} noValidate>
-                            <h2>Client Login</h2>
+                            <h2>Login</h2>
 
                             {serverError ? <div className="form-alert">{serverError}</div> : null}
 
-                            <Input
-                                label="Agent/Supplier Code"
-                                name="agentSupplierCode"
-                                value={values.agentSupplierCode}
-                                onChange={event => updateValue('agentSupplierCode', event.target.value)}
-                                error={errors.agentSupplierCode}
-                                autoComplete="organization"
-                            />
+                            <div className="login-form-group">
+                                <input
+                                    name="agentSupplierCode"
+                                    value={values.agentSupplierCode}
+                                    onChange={event => updateValue('agentSupplierCode', event.target.value)}
+                                    placeholder="Agent/Supplier Code"
+                                    autoComplete="organization"
+                                    className={errors.agentSupplierCode ? 'has-error' : ''}
+                                />
+                                {errors.agentSupplierCode ? <span className="field-error">{errors.agentSupplierCode}</span> : null}
+                            </div>
 
-                            <Input
-                                label="Email/User Name"
-                                name="email"
-                                value={values.email}
-                                onChange={event => updateValue('email', event.target.value)}
-                                error={errors.email}
-                                autoComplete="username"
-                            />
+                            <div className="login-form-group">
+                                <input
+                                    name="email"
+                                    value={values.email}
+                                    onChange={event => updateValue('email', event.target.value)}
+                                    placeholder="Email/User Name"
+                                    autoComplete="username"
+                                    className={errors.email ? 'has-error' : ''}
+                                />
+                                {errors.email ? <span className="field-error">{errors.email}</span> : null}
+                            </div>
 
-                            <Input
-                                label="Password"
-                                name="password"
-                                type="password"
-                                value={values.password}
-                                onChange={event => updateValue('password', event.target.value)}
-                                error={errors.password}
-                                autoComplete="current-password"
-                            />
+                            <div className="login-form-group">
+                                <input
+                                    name="password"
+                                    type="password"
+                                    value={values.password}
+                                    onChange={event => updateValue('password', event.target.value)}
+                                    placeholder="Password"
+                                    autoComplete="current-password"
+                                    className={errors.password ? 'has-error' : ''}
+                                />
+                                {errors.password ? <span className="field-error">{errors.password}</span> : null}
+                            </div>
 
                             <div className="login-options">
                                 <label>
@@ -116,6 +175,19 @@ export default function LoginPage({ navigate }: LoginPageProps) {
                                 {isSubmitting ? <Loader /> : 'Login'}
                             </Button>
                         </form>
+                    </div>
+                </div>
+            </section>
+
+            <section className="benefit-section">
+                <div className="container">
+                    <h2>How it benefits our travel partners?</h2>
+                    <div className="benefits">
+                        {benefits.map(benefit => (
+                            <div className="benefit-card" key={benefit}>
+                                <h4>{benefit}</h4>
+                            </div>
+                        ))}
                     </div>
                 </div>
             </section>

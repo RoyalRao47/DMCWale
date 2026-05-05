@@ -1,4 +1,5 @@
 import type { InputHTMLAttributes } from 'react';
+import * as React from 'react';
 
 type InputProps = InputHTMLAttributes<HTMLInputElement> & {
     label: string;

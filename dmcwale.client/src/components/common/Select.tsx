@@ -1,4 +1,5 @@
 import type { SelectHTMLAttributes } from 'react';
+import * as React from 'react';
 
 type SelectProps = SelectHTMLAttributes<HTMLSelectElement> & {
     label: string;

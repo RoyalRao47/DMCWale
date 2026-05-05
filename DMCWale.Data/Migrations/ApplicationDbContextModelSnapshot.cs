@@ -1275,6 +1275,11 @@ namespace DMCWale.Data.Migrations
                         .HasMaxLength(450)
                         .HasColumnType("nvarchar(450)");
 
+                    b.Property<string>("AgentSupplierCode")
+                        .IsRequired()
+                        .HasMaxLength(50)
+                        .HasColumnType("nvarchar(50)");
+
                     b.Property<string>("Email")
                         .IsRequired()
                         .HasMaxLength(256)
@@ -1316,6 +1321,9 @@ namespace DMCWale.Data.Migrations
                     b.HasKey("Id");
 
                     b.HasIndex("AspNetUserId")
+                        .IsUnique();
+
+                    b.HasIndex("AgentSupplierCode")
                         .IsUnique();
 
                     b.ToTable("Users", (string)null);

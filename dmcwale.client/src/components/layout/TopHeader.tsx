@@ -1,3 +1,4 @@
+import * as React from 'react';
 import { clearAuth, getStoredAuth } from '../../features/auth/authStore';
 
 type TopHeaderProps = {

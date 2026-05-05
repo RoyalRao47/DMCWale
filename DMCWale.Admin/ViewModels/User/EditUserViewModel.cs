@@ -3,8 +3,12 @@ using Microsoft.AspNetCore.Mvc.Rendering;
 
 namespace DMCWale.Admin.ViewModels.User;
 
-public class CreateUserViewModel
+public class EditUserViewModel
 {
+    public int Id { get; set; }
+
+    public string AspNetUserId { get; set; } = string.Empty;
+
     [Required]
     [Display(Name = "First Name")]
     public string FirstName { get; set; } = string.Empty;
@@ -23,19 +27,27 @@ public class CreateUserViewModel
     [Required]
     public string Mobile { get; set; } = string.Empty;
 
-    [Required]
-    [DataType(DataType.Password)]
-    public string Password { get; set; } = string.Empty;
+    [Display(Name = "Agent/Supplier Code")]
+    public string AgentSupplierCode { get; set; } = string.Empty;
 
-    [Required]
+    [DataType(DataType.Password)]
+    [Display(Name = "New Password")]
+    public string? Password { get; set; }
+
     [DataType(DataType.Password)]
     [Compare(nameof(Password), ErrorMessage = "Confirm password must match password.")]
-    [Display(Name = "Confirm Password")]
-    public string ConfirmPassword { get; set; } = string.Empty;
+    [Display(Name = "Confirm New Password")]
+    public string? ConfirmPassword { get; set; }
 
     [Required]
     [Display(Name = "Role")]
     public string RoleName { get; set; } = string.Empty;
+
+    [Display(Name = "Is Active")]
+    public bool IsActive { get; set; }
+
+    [Display(Name = "Is Left")]
+    public bool IsLeft { get; set; }
 
     public List<SelectListItem> Roles { get; set; } = new();
 }

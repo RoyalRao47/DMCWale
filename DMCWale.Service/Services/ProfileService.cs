@@ -187,6 +187,9 @@ public class ProfileService : IProfileService
             return userProfile;
         }
 
+        applicationUser.AgentSupplierCode ??= await GenerateUniqueAgentSupplierCodeAsync(cancellationToken);
+        await _userManager.UpdateAsync(applicationUser);
+
         userProfile = new User
         {
             AspNetUserId = applicationUser.Id,
@@ -195,6 +198,7 @@ public class ProfileService : IProfileService
             LastName = string.Empty,
             Email = applicationUser.Email ?? string.Empty,
             Mobile = applicationUser.PhoneNumber ?? string.Empty,
+            AgentSupplierCode = applicationUser.AgentSupplierCode,
             IsActive = true,
             IsLeft = false,
             AddDate = DateTime.UtcNow
@@ -229,5 +233,19 @@ public class ProfileService : IProfileService
 
         await _userDetailRepository.InsertAsync(userDetail, saveChanges: false, cancellationToken);
         return userDetail;
+    }
+
+    private async Task<string> GenerateUniqueAgentSupplierCodeAsync(CancellationToken cancellationToken)
+    {
+        for (var attempt = 0; attempt < 100; attempt++)
+        {
+            var code = $"DMC-{Random.Shared.Next(1000, 10000)}";
+            if (!await _userManager.Users.AnyAsync(user => user.AgentSupplierCode == code, cancellationToken))
+            {
+                return code;
+            }
+        }
+
+        throw new InvalidOperationException("Could not generate a unique Agent/Supplier Code.");
     }
 }

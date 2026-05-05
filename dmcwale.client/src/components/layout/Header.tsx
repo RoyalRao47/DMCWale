@@ -1,3 +1,4 @@
+import * as React from 'react';
 import MainNavigation from './MainNavigation';
 import TopHeader from './TopHeader';
 

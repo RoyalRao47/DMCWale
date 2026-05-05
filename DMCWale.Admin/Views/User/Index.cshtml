@@ -10,6 +10,15 @@
         {
             <div class="alert alert-success">@successMessage</div>
         }
+        @if (TempData["ErrorMessage"] is string errorMessage)
+        {
+            <div class="alert alert-danger">@errorMessage</div>
+        }
+
+        <form id="userStatusAntiForgeryForm" class="hidden">
+            @Html.AntiForgeryToken()
+        </form>
+        <div id="userStatusNotification" class="alert hidden" role="alert"></div>
 
         <div class="panel panel-primary">
             <div class="panel-heading">
@@ -45,17 +54,19 @@
                         <th>Username</th>
                         <th>Email</th>
                         <th>Mobile</th>
+                        <th>Agent/Supplier Code</th>
                         <th>Role</th>
                         <th>Active</th>
                         <th>Left</th>
                         <th>Added</th>
+                        <th class="text-right">Actions</th>
                     </tr>
                 </thead>
                 <tbody>
                     @if (Model.Users.Count == 0)
                     {
                         <tr>
-                            <td colspan="9" class="text-center text-muted">No users found.</td>
+                            <td colspan="11" class="text-center text-muted">No users found.</td>
                         </tr>
                     }
                     else
@@ -65,18 +76,43 @@
                             <tr>
                                 <td>@user.FirstName</td>
                                 <td>@user.LastName</td>
-                                <td>@user.Username</td>
-                                <td>@user.Email</td>
-                                <td>@user.Mobile</td>
-                                <td>@user.RoleName</td>
-                                <td>@(user.IsActive ? "Yes" : "No")</td>
-                                <td>@(user.IsLeft ? "Yes" : "No")</td>
-                                <td>@user.AddDate.ToString("yyyy-MM-dd")</td>
-                            </tr>
-                        }
+                            <td>@user.Username</td>
+                            <td>@user.Email</td>
+                            <td>@user.Mobile</td>
+                            <td>@user.AgentSupplierCode</td>
+                            <td>@user.RoleName</td>
+                            <td>
+                                <input type="checkbox"
+                                       class="js-user-status-toggle"
+                                       data-user-id="@user.Id"
+                                       data-toggle-url="@Url.Action("ToggleActive", "User")"
+                                       data-toggle-kind="active"
+                                       @(user.IsActive ? "checked" : string.Empty) />
+                            </td>
+                            <td>
+                                <input type="checkbox"
+                                       class="js-user-status-toggle"
+                                       data-user-id="@user.Id"
+                                       data-toggle-url="@Url.Action("ToggleLeft", "User")"
+                                       data-toggle-kind="left"
+                                       @(user.IsLeft ? "checked" : string.Empty) />
+                            </td>
+                            <td>@user.AddDate.ToString("yyyy-MM-dd")</td>
+                            <td class="text-right">
+                                <a asp-action="Edit" asp-route-id="@user.Id" class="btn btn-info btn-sm">
+                                    <i class="entypo-pencil"></i>
+                                    Edit
+                                </a>
+                            </td>
+                        </tr>
                     }
+                }
                 </tbody>
             </table>
         </div>
     </div>
 </div>
+
+@section Scripts {
+    <script src="~/js/user-management.js" asp-append-version="true"></script>
+}

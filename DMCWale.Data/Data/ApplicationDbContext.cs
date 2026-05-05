@@ -84,6 +84,10 @@ public class ApplicationDbContext : IdentityDbContext<ApplicationUser, Applicati
                 .IsRequired()
                 .HasMaxLength(30);
 
+            entity.Property(user => user.AgentSupplierCode)
+                .IsRequired()
+                .HasMaxLength(50);
+
             entity.Property(user => user.IsActive)
                 .HasDefaultValue(true);
 
@@ -94,6 +98,9 @@ public class ApplicationDbContext : IdentityDbContext<ApplicationUser, Applicati
                 .HasDefaultValueSql("GETUTCDATE()");
 
             entity.HasIndex(user => user.AspNetUserId)
+                .IsUnique();
+
+            entity.HasIndex(user => user.AgentSupplierCode)
                 .IsUnique();
 
             entity.HasOne(user => user.AspNetUser)
