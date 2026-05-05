@@ -44,6 +44,16 @@ public class ApplicationDbContext : IdentityDbContext<ApplicationUser, Applicati
     {
         base.OnModelCreating(builder);
 
+        builder.Entity<ApplicationUser>(entity =>
+        {
+            entity.Property(user => user.AgentSupplierCode)
+                .HasMaxLength(50);
+
+            entity.HasIndex(user => user.AgentSupplierCode)
+                .IsUnique()
+                .HasFilter("[AgentSupplierCode] IS NOT NULL");
+        });
+
         builder.Entity<User>(entity =>
         {
             entity.ToTable("Users");

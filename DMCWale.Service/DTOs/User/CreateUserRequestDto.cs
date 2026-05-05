@@ -12,6 +12,8 @@ public class CreateUserRequestDto
 
     public string Mobile { get; set; } = string.Empty;
 
+    public string AgentSupplierCode { get; set; } = string.Empty;
+
     public string Password { get; set; } = string.Empty;
 
     public string RoleName { get; set; } = string.Empty;

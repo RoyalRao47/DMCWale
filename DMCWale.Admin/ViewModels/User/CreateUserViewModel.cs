@@ -24,6 +24,11 @@ public class CreateUserViewModel
     public string Mobile { get; set; } = string.Empty;
 
     [Required]
+    [StringLength(50)]
+    [Display(Name = "Agent/Supplier Code")]
+    public string AgentSupplierCode { get; set; } = string.Empty;
+
+    [Required]
     [DataType(DataType.Password)]
     public string Password { get; set; } = string.Empty;
 

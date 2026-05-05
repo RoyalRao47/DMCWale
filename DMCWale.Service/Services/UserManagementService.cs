@@ -43,15 +43,22 @@ public class UserManagementService : IUserManagementService
         var username = request.Username.Trim();
         var email = request.Email.Trim();
         var mobile = request.Mobile.Trim();
+        var agentSupplierCode = request.AgentSupplierCode.Trim().ToUpperInvariant();
         var roleName = request.RoleName.Trim();
 
         if (string.IsNullOrWhiteSpace(username) ||
             string.IsNullOrWhiteSpace(email) ||
             string.IsNullOrWhiteSpace(mobile) ||
+            string.IsNullOrWhiteSpace(agentSupplierCode) ||
             string.IsNullOrWhiteSpace(roleName) ||
             string.IsNullOrWhiteSpace(request.Password))
         {
             return ServiceResult.Failure("User details are incomplete.");
+        }
+
+        if (agentSupplierCode.Length > 50)
+        {
+            return ServiceResult.Failure("User could not be created.", ["Agent/Supplier Code must be 50 characters or fewer."]);
         }
 
         if (!await _roleManager.RoleExistsAsync(roleName))
@@ -69,6 +76,11 @@ public class UserManagementService : IUserManagementService
             return ServiceResult.Failure("User could not be created.", ["Email is already in use."]);
         }
 
+        if (await _userManager.Users.AnyAsync(user => user.AgentSupplierCode == agentSupplierCode, cancellationToken))
+        {
+            return ServiceResult.Failure("User could not be created.", ["Agent/Supplier Code is already in use."]);
+        }
+
         await using var transaction = await _userRepository.GetDbContext().Database.BeginTransactionAsync(cancellationToken);
 
         try
@@ -77,6 +89,7 @@ public class UserManagementService : IUserManagementService
             {
                 UserName = username,
                 Email = email,
+                AgentSupplierCode = agentSupplierCode,
                 PhoneNumber = mobile,
                 EmailConfirmed = true
             };

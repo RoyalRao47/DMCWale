@@ -78,6 +78,7 @@ public class UserController : Controller
                 Username = model.Username,
                 Email = model.Email,
                 Mobile = model.Mobile,
+                AgentSupplierCode = model.AgentSupplierCode,
                 Password = model.Password,
                 RoleName = model.RoleName
             },
@@ -91,6 +92,12 @@ public class UserController : Controller
 
         foreach (var error in result.Errors)
         {
+            if (error.Contains("Agent/Supplier Code", StringComparison.OrdinalIgnoreCase))
+            {
+                ModelState.AddModelError(nameof(model.AgentSupplierCode), error);
+                continue;
+            }
+
             ModelState.AddModelError(string.Empty, error);
         }
 

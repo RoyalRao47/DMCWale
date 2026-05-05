@@ -1,0 +1,13 @@
+:root {
+    --color-navy: #25255a;
+    --color-blue: #073763;
+    --color-green: #416f32;
+    --color-green-dark: #315a26;
+    --color-red: #f12619;
+    --color-surface: #ffffff;
+    --color-muted: #f4f4f6;
+    --color-border: #dddddf;
+    --color-text: #1f2330;
+    --color-danger: #b42318;
+    --shadow-panel: 0 12px 30px rgba(12, 18, 38, 0.16);
+}
