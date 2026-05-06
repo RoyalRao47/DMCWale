@@ -1,6 +1,7 @@
 import * as React from 'react';
 import Header from '../../components/layout/Header';
-import { CustomizePackagePageProps, getPackageDates, formatDisplayDate, formatDay, destinations } from './CustomizePackagePageProps';
+import { CustomizePackagePageProps, formatDisplayDate, formatDay, destinations } from './CustomizePackagePageProps';
+import { getPackageDates } from "./getPackageDates";
 
 
 export default function CustomizePackagePage({ navigate, queryString }: CustomizePackagePageProps) {
