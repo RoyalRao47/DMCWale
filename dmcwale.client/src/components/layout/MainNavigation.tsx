@@ -1,3 +1,4 @@
+import * as React from 'react';
 import { mainNavigationItems } from './navigation.config';
 
 export default function MainNavigation() {

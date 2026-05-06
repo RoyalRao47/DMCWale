@@ -10,7 +10,7 @@ export default function HomePage({ navigate }: HomePageProps) {
     return (
         <div className="home-page">
             <Header navigate={navigate} />
-            <HeroBanner />
+            <HeroBanner navigate={navigate} />
         </div>
     );
 }

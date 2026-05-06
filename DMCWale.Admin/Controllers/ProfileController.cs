@@ -65,6 +65,7 @@ public class ProfileController : Controller
                 FirstName = details.FirstName,
                 LastName = details.LastName,
                 Mobile = details.Mobile,
+                Email = details.Email,
                 Salutation = details.Salutation,
                 CountryCode = details.CountryCode,
                 City = details.City,

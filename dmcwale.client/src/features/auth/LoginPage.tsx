@@ -6,6 +6,7 @@ import { mainNavigationItems } from '../../components/layout/navigation.config';
 import { saveAuth } from './authStore';
 import type { LoginRequest } from './auth.types';
 import { validateLogin, type LoginErrors } from './login.schema';
+import * as React from 'react';
 
 type LoginPageProps = {
     navigate: (path: string) => void;

@@ -26,11 +26,14 @@ export default function TopHeader({ navigate }: TopHeaderProps) {
                         Wallet <strong>{walletAmount.toLocaleString('en-US', { minimumFractionDigits: 2 })} USD</strong>
                     </button>
                     <div className="account-menu">
-                        <button className="account-button" type="button">
+                        <button className="account-button" type="button" onClick={() => navigate('/account/profile')}>
                             My Account
                         </button>
                         <div className="account-dropdown">
                             <div className="account-name">{auth?.fullName || 'My Profile'}</div>
+                            <button type="button" onClick={() => navigate('/account/profile')}>
+                                My Profile
+                            </button>
                             <button type="button" onClick={handleLogout}>
                                 Logout
                             </button>

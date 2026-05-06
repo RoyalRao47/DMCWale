@@ -1,3 +1,4 @@
+import * as React from 'react';
 import { serviceTabs } from '../../components/layout/navigation.config';
 import type { SearchMode } from './HeroBanner';
 

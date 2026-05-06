@@ -50,6 +50,8 @@ public class ProfileService : IProfileService
             .AsQueryable()
             .FirstOrDefaultAsync(detail => detail.AspNetUserId == aspNetUserId, cancellationToken);
 
+        var roles = await _userManager.GetRolesAsync(applicationUser);
+
         return new ProfileDetailsDto
         {
             FirstName = userProfile?.FirstName ?? string.Empty,
@@ -63,6 +65,8 @@ public class ProfileService : IProfileService
             Signature = userDetail?.Signature ?? string.Empty,
             Username = userProfile?.Username ?? applicationUser.UserName ?? string.Empty,
             Email = userProfile?.Email ?? applicationUser.Email ?? string.Empty,
+            AgentSupplierCode = applicationUser.AgentSupplierCode ?? userProfile?.AgentSupplierCode ?? string.Empty,
+            RoleName = roles.FirstOrDefault() ?? string.Empty,
             ProfileImagePath = userDetail?.ProfileImagePath
         };
     }
@@ -78,6 +82,71 @@ public class ProfileService : IProfileService
             return ServiceResult.Failure("User account was not found.");
         }
 
+        var firstName = request.FirstName.Trim();
+        var lastName = request.LastName.Trim();
+        var email = string.IsNullOrWhiteSpace(request.Email)
+            ? applicationUser.Email?.Trim() ?? string.Empty
+            : request.Email.Trim();
+        var mobile = request.Mobile.Trim();
+        var city = request.City.Trim();
+        var address = request.Address1.Trim();
+        var validationErrors = new List<string>();
+
+        if (string.IsNullOrWhiteSpace(firstName))
+        {
+            validationErrors.Add("First name is required.");
+        }
+
+        if (string.IsNullOrWhiteSpace(lastName))
+        {
+            validationErrors.Add("Last name is required.");
+        }
+
+        if (string.IsNullOrWhiteSpace(email))
+        {
+            validationErrors.Add("Email is required.");
+        }
+        else if (!new System.ComponentModel.DataAnnotations.EmailAddressAttribute().IsValid(email))
+        {
+            validationErrors.Add("Enter a valid email address.");
+        }
+
+        if (string.IsNullOrWhiteSpace(mobile))
+        {
+            validationErrors.Add("Mobile is required.");
+        }
+        else if (mobile.Length > 30)
+        {
+            validationErrors.Add("Mobile must be 30 characters or fewer.");
+        }
+
+        if (string.IsNullOrWhiteSpace(city))
+        {
+            validationErrors.Add("City is required.");
+        }
+
+        if (string.IsNullOrWhiteSpace(address))
+        {
+            validationErrors.Add("Address is required.");
+        }
+
+        if (validationErrors.Count > 0)
+        {
+            return ServiceResult.Failure("Profile details are incomplete.", validationErrors);
+        }
+
+        var normalizedEmail = _userManager.NormalizeEmail(email);
+        var emailOwner = await _userManager.Users
+            .AsNoTracking()
+            .FirstOrDefaultAsync(
+                user => user.NormalizedEmail == normalizedEmail && user.Id != aspNetUserId,
+                cancellationToken);
+
+        if (emailOwner is not null)
+        {
+            return ServiceResult.Failure("Profile could not be updated.", ["Email is already in use."]);
+        }
+
         await using var transaction = await _userRepository
             .GetDbContext()
             .Database
@@ -85,7 +154,9 @@ public class ProfileService : IProfileService
 
         try
         {
-            applicationUser.PhoneNumber = request.Mobile.Trim();
+            applicationUser.Email = email;
+            applicationUser.NormalizedEmail = normalizedEmail;
+            applicationUser.PhoneNumber = mobile;
 
             var identityResult = await _userManager.UpdateAsync(applicationUser);
             if (!identityResult.Succeeded)
@@ -99,22 +170,26 @@ public class ProfileService : IProfileService
             var userProfile = await GetOrCreateUserProfileAsync(applicationUser, cancellationToken);
             var userDetail = await GetOrCreateUserDetailAsync(aspNetUserId, cancellationToken);
 
-            userProfile.FirstName = request.FirstName.Trim();
-            userProfile.LastName = request.LastName.Trim();
-            userProfile.Mobile = request.Mobile.Trim();
+            userProfile.FirstName = firstName;
+            userProfile.LastName = lastName;
+            userProfile.Email = email;
+            userProfile.Mobile = mobile;
             userProfile.ModifyDate = DateTime.UtcNow;
 
             userDetail.Salutation = request.Salutation?.Trim() ?? string.Empty;
             userDetail.CountryCode = request.CountryCode?.Trim() ?? string.Empty;
-            userDetail.City = request.City?.Trim() ?? string.Empty;
-            userDetail.Address1 = request.Address1?.Trim() ?? string.Empty;
+            userDetail.City = city;
+            userDetail.Address1 = address;
             userDetail.Address2 = request.Address2?.Trim() ?? string.Empty;
             userDetail.Signature = request.Signature?.Trim() ?? string.Empty;
             userDetail.ModifyDate = DateTime.UtcNow;
 
             await _userRepository.SaveChangesAsync(cancellationToken);
             await transaction.CommitAsync(cancellationToken);
-            await _signInManager.RefreshSignInAsync(applicationUser);
+            if (_signInManager.Context.User?.Identity?.AuthenticationType == IdentityConstants.ApplicationScheme)
+            {
+                await _signInManager.RefreshSignInAsync(applicationUser);
+            }
 
             return ServiceResult.Success("Profile updated successfully.");
         }

@@ -22,6 +22,18 @@ export function saveAuth(auth: AuthUser, remember: boolean) {
     storage.setItem(AUTH_STORAGE_KEY, JSON.stringify(auth));
 }
 
+export function updateStoredAuth(update: Partial<AuthUser>) {
+    const sessionAuth = sessionStorage.getItem(AUTH_STORAGE_KEY);
+    const storage = sessionAuth ? sessionStorage : localStorage;
+    const current = getStoredAuth();
+
+    if (!current) {
+        return;
+    }
+
+    storage.setItem(AUTH_STORAGE_KEY, JSON.stringify({ ...current, ...update }));
+}
+
 export function clearAuth() {
     sessionStorage.removeItem(AUTH_STORAGE_KEY);
     localStorage.removeItem(AUTH_STORAGE_KEY);
