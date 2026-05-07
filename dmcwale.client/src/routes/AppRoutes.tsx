@@ -5,6 +5,7 @@ import LoginPage from '../features/auth/LoginPage';
 import { isAuthenticated } from '../features/auth/authStore';
 import HomePage from '../features/home/HomePage';
 import CustomizePackagePage from '../features/package/CustomizePackagePage.1';
+import ThemePreviewPage from '../features/themePreview/ThemePreviewPage';
 import * as React from 'react';
 
 function getCurrentPath() {
@@ -37,6 +38,10 @@ export default function AppRoutes() {
 
     return useMemo(() => {
         const [routePath, queryString = ''] = path.split('?');
+
+        if (routePath === '/theme-preview') {
+            return <ThemePreviewPage navigate={navigate} />;
+        }
 
         if (routePath === '/home') {
             return (
